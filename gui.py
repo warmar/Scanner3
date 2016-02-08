@@ -116,14 +116,14 @@ class GUI(tk.Tk):
 
         credits_frame = tk.Frame(self)
         credits_frame.grid(row=2, column=0, sticky='w')
-        powered_by = tk.Label(self.credits_frame, text='Powered by ')
+        powered_by = tk.Label(credits_frame, text='Powered by ')
         powered_by.pack(side='left')
-        steam = tk.Label(self.credits_frame, text='Steam', fg='blue', cursor='hand2')
+        steam = tk.Label(credits_frame, text='Steam', fg='blue', cursor='hand2')
         steam.bind('<Button-1>', lambda event: webbrowser.open('http://steampowered.com'))
         steam.pack(side='left')
-        and_label = tk.Label(self.credits_frame, text=' and ')
+        and_label = tk.Label(credits_frame, text=' and ')
         and_label.pack(side='left')
-        backpack_tf = tk.Label(self.credits_frame, text='Backpack.tf', fg='blue', cursor='hand2')
+        backpack_tf = tk.Label(credits_frame, text='Backpack.tf', fg='blue', cursor='hand2')
         backpack_tf.bind('<Button-1>', lambda event: webbrowser.open('http://backpack.tf'))
         backpack_tf.pack(side='left')
 
