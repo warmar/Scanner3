@@ -4,13 +4,24 @@ import idsprocessor
 import requestmanager
 import configparser
 import threading
+import requests
 import time
 import gui
 import sys
+import os
+
+SCHEMA_URL = 'http://api.steampowered.com/IEconItems_440/GetSchema/v0001/?key=%s&language=en'
+PRICELIST_URL = 'http://backpack.tf/api/IGetPrices/v4/?key=%s&raw=1'
 
 
 class ProcessManager:
     def __init__(self):
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
+
+        self.update_schema()
+        self.update_pricelist()
+
         self.item_schema = self.read_schema('ItemSchema.txt')
         self.particle_effect_schema = self.read_schema('ParticleEffectSchema.txt')
         self.process_schemas()
@@ -19,9 +30,6 @@ class ProcessManager:
         self.refined_price = (self.price_list['Refined Metal']['prices']['6']['Tradable']['Craftable']['0']['value'])
         self.key_price = (self.price_list['Mann Co. Supply Crate Key']['prices']
                           ['6']['Tradable']['Craftable']['0']['value_raw'])
-
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
 
         self.gui = gui.GUI(self)
         self.request_manager = requestmanager.RequestManager(self)
@@ -32,6 +40,36 @@ class ProcessManager:
         self.gui.mainloop()
 
         self.config.write(open('config.ini', 'w'))
+
+    def update_schema(self):
+        if os.path.getmtime('Resources/ItemSchema.txt') < (time.time() - 300):
+            print('Updating Schema')
+            raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
+            item_schema = raw_schema['result']['items']
+            particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
+            for item in item_schema:
+                if not item['image_url']:
+                    continue
+                if 'Paint Can' in item['name']:
+                    continue
+                file_name = item['item_name'].replace('?', '')
+                file_name = file_name.replace(':', '')
+                if not os.path.exists('Resources/Items/%s.png' % file_name):
+                    with open('Resources/Items/%s.png' % file_name, 'wb+') as write_item_image:
+                        image = requests.get(item['image_url']).content
+                        write_item_image.write(image)
+            with open('Resources/ItemSchema.txt', 'wb') as write_item_schema:
+                write_item_schema.write(repr(item_schema).encode())
+            with open('Resources/ParticleEffectSchema.txt', 'wb') as write_particle_effect_schema:
+                write_particle_effect_schema.write(repr(particle_effect_schema).encode())
+
+    def update_pricelist(self):
+        if os.path.getmtime('Resources/PriceList.txt') < (time.time() - 300):
+            print('Updating Pricelist')
+            raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
+            price_list = raw_prices['response']['items']
+            with open('Resources/PriceList.txt', 'wb') as write_price_list:
+                write_price_list.write(repr(price_list).encode('utf-8'))
 
     def read_schema(self, schema_name):
         with open('Resources/{0}'.format(schema_name), 'rb') as read_schema:
