@@ -9,6 +9,7 @@ import time
 import gui
 import sys
 import os
+from tkinter import messagebox
 
 SCHEMA_URL = 'http://api.steampowered.com/IEconItems_440/GetSchema/v0001/?key=%s&language=en'
 PRICELIST_URL = 'http://backpack.tf/api/IGetPrices/v4/?key=%s&raw=1'
@@ -18,6 +19,13 @@ class ProcessManager:
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
+
+        if not self.config['api']['steam_api_key']:
+            messagebox.showerror('API Key', 'You need a steam API key')
+            return
+        if not self.config['api']['backpack_tf_api_key']:
+            messagebox.showerror('API Key', 'You need a backpack.tf API key')
+            return
 
         self.update_schema()
         self.update_pricelist()
