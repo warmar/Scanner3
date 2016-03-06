@@ -508,7 +508,7 @@ class GUI(tk.Tk):
         if not player.avatar:
             player.avatarimage = self.default_avatar
         else:
-            avatarimage = requests.get(player.avatar[8:])  # [8:] is to avoid certificate errors with ssl
+            avatarimage = requests.get('http://' + player.avatar[8:])  # [8:] is to avoid certificate errors with ssl
             if avatarimage.status_code == 200:
                 player.avatarimage = ImageTk.PhotoImage(Image.open(io.BytesIO(avatarimage.content)).resize(
                     (int(self.config['output']['image_size']), int(self.config['output']['image_size'])),
