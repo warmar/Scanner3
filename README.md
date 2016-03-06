@@ -3,7 +3,7 @@
 This is the repo for my public TF2 scanner!
 
 Py2exe build available at:
-https://www.mediafire.com/?zpdlh92cqqzkpxe
+https://www.mediafire.com/?0ho6yc5l4w6j9a1
 
 Note: You have to provide your own steam and backpack.tf API keys
 
