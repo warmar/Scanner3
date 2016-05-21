@@ -131,7 +131,7 @@ class BaseTab(tk.Frame):
         if not player.avatar:
             player.avatarimage = self.process_manager.gui.default_avatar
         else:
-            avatarimage = requests.get(player.avatar)
+            avatarimage = requests.get('http://' + player.avatar[8:])
             if avatarimage.status_code == 200:
                 player.avatarimage = ImageTk.PhotoImage(Image.open(io.BytesIO(avatarimage.content)).resize(
                     (self.image_size(), self.image_size()), Image.ANTIALIAS))
