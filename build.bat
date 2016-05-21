@@ -1,2 +1,3 @@
-py setup.py py2exe
+cd src
+py -3.4 setup.py py2exe
 pause
