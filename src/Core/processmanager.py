@@ -45,6 +45,7 @@ class ProcessManager:
         self.update_pricelist()
 
         self.gui.update_images()
+        self.gui.add_tab()
         self.gui.main()
 
     def update_schema(self):
