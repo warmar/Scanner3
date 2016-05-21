@@ -10,9 +10,8 @@ import xml
 
 class RequestManager(threading.Thread):
     def __init__(self, process_manager):
-        threading.Thread.__init__(self)
+        super().__init__()
         self.process_manager = process_manager
-        self.name = 'RequestManager'
 
         self.end_ = False
         self.cancel = False

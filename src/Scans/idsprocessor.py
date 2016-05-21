@@ -4,15 +4,13 @@ from Scans import basescan
 
 
 class IDsProcessor(basescan.BaseScan):
-    name = 'ids'
+    def __init__(self, process_manager, tab):
+        super().__init__(process_manager, tab)
 
-    def __init__(self, process_manager):
-        basescan.BaseScan.__init__(self, process_manager)
-
-        self.input_text = self.process_manager.gui.ids_input_text.get('0.0', 'end-1c')
+        self.input_text = self.tab.input_text.get('0.0', 'end-1c')
 
     def run(self):
-        self.process_manager.gui.ids_scan_button.config(image=self.process_manager.gui.xshark, command=self.end)
+        self.tab.scan_button.config(image=self.process_manager.gui.xshark, command=self.end)
 
         self.steam_id64s = self.find_ids(self.input_text)
         self.mark_time()
@@ -22,15 +20,14 @@ class IDsProcessor(basescan.BaseScan):
             self.finish()
             return
 
-        self.process_manager.gui.clear_output('ids', self.steam_id64s)
+        self.tab.clear_output(self.steam_id64s)
         self.scan()
 
         self.finish()
 
     def set_status(self, message, value, maximum):
-        self.process_manager.gui.ids_progress_label.config(text=message)
-        self.process_manager.gui.ids_progressbar.config(value=value, maximum=maximum)
+        self.tab.progress_label.config(text=message)
+        self.tab.progressbar.config(value=value, maximum=maximum)
 
     def reset_button(self):
-        self.process_manager.gui.ids_scan_button.config(image=self.process_manager.gui.shark,
-                                                        command=self.process_manager.start_ids_scan)
+        self.tab.scan_button.config(image=self.process_manager.gui.shark, command=self.tab.start_scan)
