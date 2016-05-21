@@ -9,11 +9,10 @@ GET_SUMMARIES_URL = 'http://api.steampowered.com/isteamuser/getplayersummaries/v
 
 
 class BaseScan(threading.Thread):
-    name = 'base'
-
-    def __init__(self, process_manager):
-        threading.Thread.__init__(self)
+    def __init__(self, process_manager, tab):
+        super().__init__()
         self.process_manager = process_manager
+        self.tab = tab
 
         self.end_ = False
         self.start_time = None
@@ -26,11 +25,11 @@ class BaseScan(threading.Thread):
         self.requirements = {}
 
     def run(self):
-        pass
+        return None
 
     def finish(self):
         self.reset_button()
-        self.process_manager.finish_scan(self)
+        self.tab.finish_scan(self)
 
     def end(self):
         if self.end_:
@@ -61,15 +60,15 @@ class BaseScan(threading.Thread):
         return list(set(steam_id64s))
 
     def get_max_hours(self):
-        if not self.process_manager.config[self.name]['max_hours']:
+        if not self.tab.max_hours:
             return None
-        return int(self.process_manager.config[self.name]['max_hours'])
+        return int(self.tab.max_hours)
 
     def get_minimum_item_value(self):
-        return float(self.process_manager.config[self.name]['raw_minimum_item_value'])
+        return float(self.tab.raw_minimum_item_value)
 
     def get_minimum_player_value(self):
-        return float(self.process_manager.config[self.name]['raw_minimum_player_value'])
+        return float(self.tab.raw_minimum_player_value)
 
     def get_player_summaries(self, players):
         steam_id64s = [player.id64 for player in players]
@@ -77,7 +76,7 @@ class BaseScan(threading.Thread):
         raw_summaries = self.process_manager.request_manager.make_api_request(url,
                                                                               mode='json',
                                                                               priority=False,
-                                                                              tags=(self.name,))
+                                                                              tags=(self.tab,))
 
         if self.end_:
             return
@@ -118,7 +117,7 @@ class BaseScan(threading.Thread):
             time.sleep(0.01)
             if self.end_:
                 request_cancel_threads = [threading.Thread(target=self.process_manager.request_manager.cancel_requests,
-                                                           args=(self.name,))]
+                                                           args=(self.tab,))]
                 request_cancel_threads[-1].start()
                 for id64 in self.steam_id64s:
                     request_cancel_threads.append(threading.Thread(
@@ -143,20 +142,19 @@ class BaseScan(threading.Thread):
 
             for player in done[:]:
                 done.remove(player)
-                if self.process_manager.config[self.name]['display_players'] == 'True':
-                    if not player.check(self.process_manager.config[self.name]['f2p'],
-                                        self.process_manager.config[self.name]['status'],
+                self.done += 1
+                self.update_progress()
+                if self.tab.display_players == 'True':
+                    if not player.check(self.tab.f2p,
+                                        self.tab.status,
                                         self.get_max_hours()):
                         continue
                     if not player.check_items(self.requirements,
                                               self.get_minimum_item_value(),
                                               self.get_minimum_player_value()):
                         continue
-                    display_threads.append(threading.Thread(target=self.process_manager.gui.display_player,
-                                                            args=(self.name, player)))
+                    display_threads.append(threading.Thread(target=self.tab.display_player, args=(player,)))
                     display_threads[-1].start()
-                self.done += 1
-                self.update_progress()
 
             for player in current_hours[:]:
                 if hours_threads[current_hours.index(player)].is_alive():
@@ -174,7 +172,7 @@ class BaseScan(threading.Thread):
                     self.done += 1
                     self.update_progress()
                     continue
-                if not self.process_manager.config[self.name]['collect_hours'] == 'True':
+                if not self.tab.collect_hours == 'True':
                     done.append(player)
                     continue
                 current_hours.append(player)
@@ -201,12 +199,11 @@ class BaseScan(threading.Thread):
                             self.done += 1
                             self.update_progress()
                             continue
-                        if not player.check_status(self.process_manager.config[self.name]['status']):
+                        if not player.check_status(self.tab.status):
                             self.done += 1
                             self.update_progress()
                             continue
-                        if not player.check_last_online(
-                                float(self.process_manager.config[self.name]['raw_last_online'])):
+                        if not player.check_last_online(float(self.tab.raw_last_online)):
                             self.done += 1
                             self.update_progress()
                             continue
