@@ -106,7 +106,7 @@ class GUI(tk.Tk):
             nonlocal done
             done += 1
             if self.splash is not None:
-                self.splash.set_status('Updating Images %s%%' % (int(done / total * 100)))
+                self.splash.set_status('Loading Images %s%%' % (int(done / total * 100)))
 
         for file_name in file_names:
             file_name = file_name.replace('.png', '')
