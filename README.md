@@ -2,8 +2,8 @@
 
 This is the repo for my public TF2 scanner!
 
-Py2exe build available at:
-https://www.mediafire.com/?0ho6yc5l4w6j9a1
+Current distribution (1.1.0) available at:
+http://www.mediafire.com/download/uz5z1i83o25qikr/distwin1.1.0.zip
 
 Note: You have to provide your own steam and backpack.tf API keys
 
