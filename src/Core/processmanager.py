@@ -29,6 +29,11 @@ class ProcessManager:
             messagebox.showerror('API Key', 'You need a backpack.tf API key')
             return
 
+        self.gui = gui.GUI(self)
+        self.gui.splash.set_status('Loading...')
+
+        self.check_update()
+
         self.item_schema = self.read_schema('ItemSchema.txt')
         self.particle_effect_schema = self.read_schema('ParticleEffectSchema.txt')
         self.process_schemas()
@@ -41,15 +46,23 @@ class ProcessManager:
         self.request_manager = requestmanager.RequestManager(self)
         self.request_manager.start()
 
-        self.gui = gui.GUI(self)
-        self.gui.splash.set_status('Loading...')
-
         self.update_schema()
         self.update_pricelist()
 
         self.gui.update_images()
         self.gui.add_tab()
         self.gui.main()
+
+    def check_update(self):
+        self.gui.splash.set_status('Checking For Updates...')
+        raw_response = requests.get('http://scanner3server-warmar.rhcloud.com/checkupdate').json()
+        major, minor, patch = raw_response['version'].split('.')
+        current_major, current_minor, current_patch = self.version.split('.')
+        if current_major >= major:
+            if current_minor >= minor:
+                if current_patch >= patch:
+                    return None
+        messagebox.showinfo('Update', raw_response['message'])
 
     def update_schema(self):
         if os.path.getmtime('Resources/ItemSchema.txt') < (time.time() - 300):
