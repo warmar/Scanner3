@@ -15,6 +15,9 @@ PRICELIST_URL = 'http://backpack.tf/api/IGetPrices/v4/?key=%s&raw=1'
 
 
 class ProcessManager:
+
+    version = '1.1.0'
+
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
