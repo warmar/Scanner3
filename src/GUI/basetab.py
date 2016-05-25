@@ -151,7 +151,6 @@ class BaseTab(tk.Frame):
                                                text='\n'.join(str(player.hours) if player.hours is not None else ' '),
                                                font=('Helvetica', self.font_size()), anchor='nw')
         self.output_canvas.tag_bind(hours, '<Button-1>', self.event_remove_player)
-        self.output_canvas.tag_bind(hours, '<Button-3>', self.mark_player)
 
         # Status Box
         status_box = self.output_canvas.create_rectangle(self.image_size() / 10, (-height) + self.text_height(),
@@ -161,7 +160,6 @@ class BaseTab(tk.Frame):
                                                          fill=STATUSES[player.status]['color'])
         self.output_canvas.tag_lower(status_box)
         self.output_canvas.tag_bind(status_box, '<Button-1>', self.event_remove_player)
-        self.output_canvas.tag_bind(status_box, '<Button-3>', self.mark_player)
 
         # Player Avatar
         avatar = self.output_canvas.create_image((self.image_size() / 5) + self.text_width(),
@@ -315,24 +313,6 @@ class BaseTab(tk.Frame):
                 remove_player.index -= 1
         del self.players[id64]
         self.update_output_scrollregion()
-
-    def mark_player(self, event):
-        id64 = int(self.output_canvas.gettags('current')[0].replace('player', ''))
-
-        player = self.players[id64]
-
-        if self.process_manager.mark_player(id64):
-            event.widget.create_rectangle(
-                0,
-                (player.index * (self.image_size() + self.text_height() + 1)) + self.text_height(),
-                (self.image_size() / 5) + self.text_width(),
-                (player.index * (self.image_size() + self.text_height() + 1)) + self.text_height() + self.image_size(),
-                tags=('player%s' % id64, 'marked%s' % id64),
-                fill='#FF0000',
-                outline='#FF0000')
-            event.widget.tag_lower('marked%s' % id64)
-        else:
-            event.widget.delete('marked%s' % id64)
 
     def display_description(self, event):
         tags = self.output_canvas.gettags('current')
