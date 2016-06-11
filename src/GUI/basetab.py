@@ -115,20 +115,20 @@ class BaseTab(tk.Frame):
 
     def font_size(self):
         return int(self.process_manager.config['output']['font_size'])
-    
+
     def displayed_items(self):
         return int(self.process_manager.config['output']['displayed_items'])
 
     def text_height(self):
         return self.process_manager.gui.text_height
-    
+
     def text_width(self):
         return self.process_manager.gui.text_width
 
     def display_player(self, player):
         height = self.image_size() + self.text_height() + 1
 
-        if not player.avatar:
+        if self.process_manager.config['technical']['display_avatars'] != 'True' or not player.avatar:
             player.avatarimage = self.process_manager.gui.default_avatar
         else:
             avatarimage = requests.get('http://' + player.avatar[8:])
@@ -151,7 +151,6 @@ class BaseTab(tk.Frame):
                                                text='\n'.join(str(player.hours) if player.hours is not None else ' '),
                                                font=('Helvetica', self.font_size()), anchor='nw')
         self.output_canvas.tag_bind(hours, '<Button-1>', self.event_remove_player)
-
         # Status Box
         status_box = self.output_canvas.create_rectangle(self.image_size() / 10, (-height) + self.text_height(),
                                                          self.image_size() / 10 + self.text_width(),
@@ -178,8 +177,9 @@ class BaseTab(tk.Frame):
                 if item.get_raw_price() < float(self.raw_minimum_item_value):
                     break
 
-            item_x = self.text_width() + (self.image_size() * (index + 1.3))
-            item_y = (-height) + self.text_height()
+            y_index, x_index = divmod(index, int(self.process_manager.config['output']['items_per_line']))
+            item_x = self.text_width() + (self.image_size() * (x_index + 1.3))
+            item_y = (-height) + self.text_height() + (y_index * self.image_size())
 
             description_text = ''
             description_text += '%s %s' % (QUALITIES[item.quality]['name'], item.get_name())
@@ -291,7 +291,7 @@ class BaseTab(tk.Frame):
         player.index = len(self.players)
         player.done = False
         self.players[player.id64] = player
-        self.output_canvas.move('player%s' % player.id64, 0, (player.index + 1) * height)
+        self.output_canvas.move('player%s' % player.id64, 0, self.output_canvas.bbox('all')[3] + height)
         player.done = True
 
         self.update_output_scrollregion()
@@ -302,14 +302,14 @@ class BaseTab(tk.Frame):
 
     def remove_player(self, id64):
         player = self.players[id64]
+        bbox = self.output_canvas.bbox('player%s' % player.id64)
         self.output_canvas.delete('player%s' % id64)
         for remove_id64 in self.players:
             remove_player = self.players[remove_id64]
             if remove_player.index > player.index:
                 while not remove_player.done:
                     time.sleep(0.01)
-                self.output_canvas.move('player%s' % remove_player.id64, 0,
-                                        -(self.image_size() + self.text_height() + 1))
+                self.output_canvas.move('player%s' % remove_player.id64, 0, bbox[1] - bbox[3])
                 remove_player.index -= 1
         del self.players[id64]
         self.update_output_scrollregion()

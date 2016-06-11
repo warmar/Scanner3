@@ -88,7 +88,7 @@ class GUI(tk.Tk):
         self.tabs[0].output_canvas.delete(test_text)
         for tab in self.tabs:
             tab.output_canvas.config(width=self.text_width + int(self.config['output']['image_size']) * (
-                int(self.config['output']['displayed_items']) + 1 + 0.4))
+                int(self.config['output']['items_per_line']) + 1 + 0.4))
 
     def clear_tab_outputs(self):
         for tab in self.tabs:
