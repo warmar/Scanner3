@@ -2,8 +2,8 @@
 
 This is the repo for my public TF2 scanner!
 
-Current distribution (1.1.1) available at:
-http://www.mediafire.com/download/633cvuqb2u9dbvi/distwin1.1.1.zip
+Current distribution (1.1.2) available at:
+http://www.mediafire.com/download/kx372w29lav86e4/distwin1.1.2.zip
 
 Note: You have to provide your own steam and backpack.tf API keys (can be obtained at https://steamcommunity.com/dev and http://backpack.tf/developer)
 
