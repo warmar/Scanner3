@@ -1,6 +1,6 @@
 # Scanner3IDsOnly
 
-This is the repo for my public TF2 scanner!
+This is the repo for my public TF2 scanner! A scanner is a tool used to find valuable items in players' backpacks. Simply paste the ids of the players you want to scan in the text box and press the scan button! A list of player ids can be obtained by typing the 'status' command into the console while connected to a server.
 
 Current distribution (1.1.2) available at:
 http://www.mediafire.com/download/kx372w29lav86e4/distwin1.1.2.zip
