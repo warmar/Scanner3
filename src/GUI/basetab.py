@@ -226,9 +226,10 @@ class BaseTab(tk.Frame):
             if item.quality == 5:
                 effect = item.get_price_index()
                 if effect != '0':
-                    self.output_canvas.create_image(item_x, item_y, tags='player%s' % player.id64,
-                                                    image=self.process_manager.gui.particle_effects[effect],
-                                                    anchor='nw')
+                    if effect in self.process_manager.gui.particle_effects:
+                        self.output_canvas.create_image(item_x, item_y, tags='player%s' % player.id64,
+                                                        image=self.process_manager.gui.particle_effects[effect],
+                                                        anchor='nw')
 
             # Item Image
             file_name = item.get_name()
