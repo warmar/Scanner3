@@ -70,7 +70,7 @@ class ProcessManager:
 
             try:
                 raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
-            except json.JSONDecodeError:
+            except ValueError:
                 messagebox.showerror('Error', 'Schema Update Error')
                 sys.exit()
 
@@ -98,7 +98,7 @@ class ProcessManager:
 
             try:
                 raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
-            except json.JSONDecodeError:
+            except ValueError:
                 messagebox.showerror('Error', 'Pricelist Update Error')
                 sys.exit()
 
@@ -110,7 +110,7 @@ class ProcessManager:
         with open('Resources/{0}'.format(schema_name), 'rb') as read_schema:
             try:
                 schema = json.loads(read_schema.read().decode())
-            except json.JSONDecodeError:
+            except ValueError:
                 messagebox.showerror('Error', 'Schema Read Error')
                 sys.exit()
         return schema
