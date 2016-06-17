@@ -6,6 +6,7 @@ import configparser
 import threading
 import requests
 import time
+import json
 import sys
 import os
 from tkinter import messagebox
@@ -33,21 +34,20 @@ class ProcessManager:
         self.gui.splash.set_status('Loading...')
 
         self.check_update()
+        self.update_schema()
+        self.update_pricelist()
 
         self.item_schema = self.read_schema('ItemSchema.txt')
         self.particle_effect_schema = self.read_schema('ParticleEffectSchema.txt')
         self.process_schemas()
 
         self.price_list = self.read_schema('PriceList.txt')
-        self.refined_price = self.price_list['Refined Metal']['prices']['6']['Tradable']['Craftable']['0']['value']
+        self.refined_price = self.price_list['Refined Metal']['prices']['6']['Tradable']['Craftable'][0]['value']
         self.key_price = self.price_list[
-            'Mann Co. Supply Crate Key']['prices']['6']['Tradable']['Craftable']['0']['value_raw']
+            'Mann Co. Supply Crate Key']['prices']['6']['Tradable']['Craftable'][0]['value_raw']
 
         self.request_manager = requestmanager.RequestManager(self)
         self.request_manager.start()
-
-        self.update_schema()
-        self.update_pricelist()
 
         self.gui.update_images()
         self.gui.add_tab()
@@ -67,7 +67,13 @@ class ProcessManager:
     def update_schema(self):
         if os.path.getmtime('Resources/ItemSchema.txt') < (time.time() - 300):
             self.gui.splash.set_status('Updating Schema...')
-            raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
+
+            try:
+                raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
+            except json.JSONDecodeError:
+                messagebox.showerror('Error', 'Schema Update Error')
+                sys.exit()
+
             item_schema = raw_schema['result']['items']
             particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
             for item in item_schema:
@@ -82,21 +88,31 @@ class ProcessManager:
                         image = requests.get(item['image_url']).content
                         write_item_image.write(image)
             with open('Resources/ItemSchema.txt', 'wb') as write_item_schema:
-                write_item_schema.write(repr(item_schema).encode())
+                write_item_schema.write(json.dumps(item_schema).encode())
             with open('Resources/ParticleEffectSchema.txt', 'wb') as write_particle_effect_schema:
-                write_particle_effect_schema.write(repr(particle_effect_schema).encode())
+                write_particle_effect_schema.write(json.dumps(particle_effect_schema).encode())
 
     def update_pricelist(self):
         if os.path.getmtime('Resources/PriceList.txt') < (time.time() - 300):
             self.gui.splash.set_status('Updating Pricelist...')
-            raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
+
+            try:
+                raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
+            except json.JSONDecodeError:
+                messagebox.showerror('Error', 'Pricelist Update Error')
+                sys.exit()
+
             price_list = raw_prices['response']['items']
             with open('Resources/PriceList.txt', 'wb') as write_price_list:
-                write_price_list.write(repr(price_list).encode())
+                write_price_list.write(json.dumps(price_list).encode())
 
     def read_schema(self, schema_name):
         with open('Resources/{0}'.format(schema_name), 'rb') as read_schema:
-            schema = eval(read_schema.read().decode())
+            try:
+                schema = json.loads(read_schema.read().decode())
+            except json.JSONDecodeError:
+                messagebox.showerror('Error', 'Schema Read Error')
+                sys.exit()
         return schema
 
     def process_schemas(self):
