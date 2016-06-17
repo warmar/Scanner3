@@ -35,10 +35,19 @@ class Item:
 
     def get_price_index(self):
         for attribute in self.attributes:
-            if attribute['defindex'] in (134, 187, 2012):
+            # Attach Particle Effect
+            if attribute['defindex'] == 134:
                 return str(attribute['float_value'])
+            # Set Supply Crate Series
+            if attribute['defindex'] == 187:
+                return str(attribute['float_value'])
+            # Tool Target Item
+            if attribute['defindex'] == 2012:
+                return str(attribute['float_value'])
+            # Taunt Particle Effect
             if attribute['defindex'] == 2041:
                 return str(attribute['value'])
+            # Chemistry Sets
             if attribute['defindex'] in range(2000, 2010):
                 if attribute['is_output']:
                     return '{0}-{1}'.format(attribute['itemdef'], attribute['quality'])
@@ -61,9 +70,12 @@ class Item:
             return None
         prices = prices['Craftable' if self.craftable else 'Non-Craftable']
 
-        if self.get_price_index() not in prices:
-            return None
-        prices = prices[self.get_price_index()]
+        if isinstance(prices, dict):
+            if self.get_price_index() not in prices:
+                return None
+            prices = prices[self.get_price_index()]
+        else:
+            prices = prices[0]
 
         return prices
 
