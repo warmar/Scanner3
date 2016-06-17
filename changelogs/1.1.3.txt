@@ -1,0 +1,2 @@
+-Handle Changed Pricelist Structure from Backpack.tf (1.1.2 Broken)
+-More Robust Schema Updating
