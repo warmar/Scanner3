@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 
+from GUI import idsoptions, basetab
 from Scans import idsprocessor
-from GUI import idsoptions
-from GUI import basetab
 
 
 class IDsTab(basetab.BaseTab):
+    name = 'ids'
+
     def __init__(self, process_manager):
         super().__init__(process_manager)
 
-        self.scan = None
-
-        self.create_widgets()
-
-        self.create_options('ids')
-
-    def open_options(self):
-        idsoptions.IDsOptions(self)
+    def create_options(self):
+        self.options = idsoptions.IDsOptions(self)
+        self.options.apply()
 
     def start_scan(self):
-        self.scan = idsprocessor.IDsProcessor(self.process_manager, self)
+        self.update_requirements()
+
+        self.scan = idsprocessor.IDsProcessor(self.process_manager, self, self.input_text.get('0.0', 'end-1c'))
+        self.scan_button.config(image=self.process_manager.gui.xshark, command=self.scan.end)
         self.scan.start()

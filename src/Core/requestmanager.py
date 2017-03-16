@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import requests.exceptions
-import xmltodict
 import threading
-import requests
 import time
 import xml
+
+import requests
+import requests.exceptions
+import xmltodict
 
 
 class RequestManager(threading.Thread):
@@ -14,7 +15,6 @@ class RequestManager(threading.Thread):
         self.process_manager = process_manager
 
         self.end_ = False
-        self.cancel = False
         self.available_requests = 0
         self.request_queue = []
         self.priority_queue = []
@@ -37,11 +37,6 @@ class RequestManager(threading.Thread):
             if (tag is None) or (tag in request['tags']):
                 request['cancel'] = True
 
-        while [request for request in self.request_queue if ((tag is None) or (tag in request['tags']))] or \
-                [request for request in self.priority_queue if ((tag is None) or (tag in request['tags']))] or \
-                [request for request in self.running_requests if ((tag is None) or (tag in request['tags']))]:
-            time.sleep(0.01)
-
     def regulate_requests(self):
         last_time = time.time() - int(self.process_manager.config['technical']['request_period'])
         while True:
@@ -51,8 +46,7 @@ class RequestManager(threading.Thread):
                 self.available_requests = float('inf')
                 time.sleep(0.01)
                 continue
-            if (self.process_manager.config['technical']['limit_requests'] == 'True' and
-                        self.available_requests == float('inf')):
+            if self.process_manager.config['technical']['limit_requests'] == 'True' and self.available_requests == float('inf'):
                 self.available_requests = int(self.process_manager.config['technical']['requests_per_period'])
                 time.sleep(0.01)
                 continue
@@ -63,12 +57,14 @@ class RequestManager(threading.Thread):
             last_time = time.time()
             time.sleep(0.01)
 
-    def make_api_request(self, url, mode, priority, tags=()):
+    def make_api_request(self, url, mode, priority, tags=(), uses_request=True):
         request = {'tags': tags, 'cancel': False}
         request['id'] = id(request)
         if priority:
             self.priority_queue.append(request)
             while self.priority_queue.index(request) != 0 or self.available_requests < 1:
+                if not uses_request:
+                    break
                 if request['cancel']:
                     self.priority_queue.remove(request)
                     return
@@ -77,25 +73,32 @@ class RequestManager(threading.Thread):
         else:
             self.request_queue.append(request)
             while self.priority_queue or self.request_queue.index(request) != 0 or self.available_requests < 1:
+                if not uses_request:
+                    break
                 if request['cancel']:
                     self.request_queue.remove(request)
                     return
                 time.sleep(0.01)
             self.request_queue.remove(request)
 
-        self.available_requests -= 1
+        if uses_request:
+            self.available_requests -= 1
         self.running_requests.append(request)
 
         try:
             raw_response = requests.get(url, timeout=5)
         except (ConnectionError, TimeoutError, requests.exceptions.Timeout, requests.exceptions.ConnectionError):
             self.running_requests.remove(request)
+            if request['cancel']:
+                return
             return self.make_api_request(url, mode=mode, priority=priority, tags=tags)
 
         self.running_requests.remove(request)
         if request['cancel']:
             return
 
+        if mode == 'text':
+            return raw_response.text
         if mode == 'json':
             try:
                 response = raw_response.json()
