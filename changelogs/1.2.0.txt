@@ -1,0 +1,5 @@
+-New Compiler, Now Using Pyinstaller
+-Added More Player Options
+-Added Item Options
+-Added Steam Market Price Data
+-Added Skins
