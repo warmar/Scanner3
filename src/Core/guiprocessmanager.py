@@ -28,6 +28,7 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
         self.gui = gui.GUI(self)
         self.gui.splash.set_status('Loading...')
 
+        self.check_update()
         self.start()
 
         self.update_images()
