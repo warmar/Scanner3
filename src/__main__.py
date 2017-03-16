@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from Core import processmanager
+from Core import guiprocessmanager
 
 
 def main():
-    processmanager.ProcessManager()
+    guiprocessmanager.GUIProcessManager()
 
 if __name__ == '__main__':
     main()

@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
+from Core import baseprocessmanager
+from Core.globals import SKINS, WEARS, QUALITIES
+
 
 class Item:
-    def __init__(self, process_manager, data=None):
+    def __init__(self, process_manager: baseprocessmanager.BaseProcessManager, data=None):
         if not data:
             data = {}
         self.process_manager = process_manager
@@ -31,6 +34,20 @@ class Item:
     def get_name(self):
         if self.is_australium():
             return 'Australium %s' % self.process_manager.item_schema[self.defindex]['item_name']
+
+        if self.defindex in SKINS:
+            name = SKINS[self.defindex]
+            wear = None
+            festive = False
+            for attribute in self.attributes:
+                if attribute['defindex'] == 725:
+                    wear = WEARS[round(attribute['float_value'], 1)]
+                if attribute['defindex'] == 2053:
+                    festive = True
+            if festive:
+                name = 'Festive ' + name
+            return '%s (%s)' % (name, wear)
+
         return self.process_manager.item_schema[self.defindex]['item_name']
 
     def get_price_index(self):
@@ -55,7 +72,7 @@ class Item:
 
     def get_prices(self):
         if self.get_name() not in self.process_manager.price_list:
-            return None
+            return self.get_market_prices()
         prices = self.process_manager.price_list[self.get_name()]['prices']
 
         if str(self.quality) not in prices:
@@ -76,6 +93,23 @@ class Item:
             prices = prices[self.get_price_index()]
         else:
             prices = prices[0]
+
+        return prices
+
+    def get_market_prices(self):
+        if self.quality in (6, 15):
+            full_name = self.get_name()
+        else:
+            full_name = QUALITIES[self.quality]['name'] + ' ' + self.get_name()
+
+        if full_name not in self.process_manager.market_price_list:
+            return None
+
+        usd_value = self.process_manager.market_price_list[full_name]['value']
+        key_value = round(usd_value / self.process_manager.market_price_list['Mann Co. Supply Crate Key']['value'], 2)
+        refined_value = key_value * self.process_manager.key_price
+
+        prices = {'currency': 'keys', 'value': key_value, 'value_raw': refined_value}
 
         return prices
 
@@ -109,8 +143,11 @@ class Item:
                     return '%s USD' % prices['value']
 
     def check(self, requirements):
-        if 'defindexes' in requirements:
-            if self.defindex not in requirements['defindexes']:
+        if 'defindex' in requirements:
+            if self.defindex not in requirements['defindex']:
+                return False
+        if 'value' in requirements:
+            if (self.get_raw_price() or 0) < requirements['value']:
                 return False
         if 'quality' in requirements:
             if self.quality != requirements['quality']:
@@ -129,5 +166,8 @@ class Item:
                 return False
         if 'traded' in requirements:
             if self.is_traded() != requirements['traded']:
+                return False
+        if 'australium' in requirements:
+            if self.is_australium() != requirements['australium']:
                 return False
         return True
