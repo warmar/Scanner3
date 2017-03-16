@@ -3,3 +3,4 @@
 -Added Item Options
 -Added Steam Market Price Data
 -Added Skins
+-Bugfixes and performance improvements
