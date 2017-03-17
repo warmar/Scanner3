@@ -7,6 +7,8 @@ http://www.mediafire.com/file/6u6sanzmkafb6wr/distwin1.2.0.zip
 
 Note: You have to provide your own steam and backpack.tf API keys (can be obtained at https://steamcommunity.com/dev and http://backpack.tf/developer)
 
+Screenshots: http://imgur.com/a/torIx
+
 Output Usage Guide: http://imgur.com/TAT4qJf
 
 Feel free to add me (suggestions should be submitted as github issues though):
