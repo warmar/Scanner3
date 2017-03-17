@@ -7,6 +7,7 @@ import sys
 import time
 
 import requests
+from requests.exceptions import RequestException
 
 from Core import requestmanager
 from Core.globals import SCHEMA_URL, PRICELIST_URL, MARKET_PRICELIST_URL
@@ -46,7 +47,7 @@ class BaseProcessManager:
 
         try:
             raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
-        except ValueError:
+        except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
             sys.exit()
 
@@ -69,7 +70,7 @@ class BaseProcessManager:
 
         try:
             raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
-        except ValueError:
+        except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
             sys.exit()
 
@@ -89,7 +90,7 @@ class BaseProcessManager:
 
         try:
             raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
-        except ValueError:
+        except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
             sys.exit()
 

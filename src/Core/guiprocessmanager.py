@@ -7,6 +7,7 @@ import time
 from tkinter import messagebox
 
 import requests
+from requests.exceptions import RequestException
 
 from Core import baseprocessmanager
 from GUI import gui
@@ -40,7 +41,13 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
 
     def check_update(self):
         self.gui.splash.set_status('Checking For Updates...')
-        raw_response = requests.get('http://scanner3server-warmar.rhcloud.com/checkupdate').json()
+
+        try:
+            raw_response = requests.get('http://scanner3server-warmar.rhcloud.com/checkupdate').json()
+        except (ValueError, ConnectionError, RequestException):
+            self.show_error('There was an error checking for updates.')
+            return
+
         major, minor, patch = raw_response['version'].split('.')
         current_major, current_minor, current_patch = self.version.split('.')
         if current_major >= major:
