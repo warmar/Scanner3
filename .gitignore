@@ -3,7 +3,7 @@ __pycache__/
 setup.py
 distwin/
 *.pyc
-ItemSchema.txt
-ParticleEffectSchema.txt
-PriceList.txt
-MarketPriceList.txt
+src/Resources/ItemSchema.txt
+src/Resources/ParticleEffectSchema.txt
+src/Resources/PriceList.txt
+src/Resources/MarketPriceList.txt
