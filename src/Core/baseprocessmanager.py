@@ -36,6 +36,9 @@ class BaseProcessManager:
         self.request_manager = requestmanager.RequestManager(self)
         self.request_manager.start()
 
+    def show_error(self, error):
+        print(error)
+
     def update_schema(self):
         if os.path.isfile('Resources/ItemSchema.txt') and os.path.isfile('Resources/ParticleEffectSchema.txt'):
             if os.path.getmtime('Resources/ItemSchema.txt') > (time.time() - 300) and os.path.getmtime('Resources/ParticleEffectSchema.txt') > (time.time()-300):
@@ -44,11 +47,15 @@ class BaseProcessManager:
         try:
             raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
         except ValueError:
-            print('Schema Update Error')
+            self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
             sys.exit()
 
-        item_schema = raw_schema['result']['items']
-        particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
+        try:
+            item_schema = raw_schema['result']['items']
+            particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
+        except KeyError:
+            self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
+            sys.exit()
 
         with open('Resources/ItemSchema.txt', 'wb') as write_item_schema:
             write_item_schema.write(json.dumps(item_schema).encode())
@@ -63,10 +70,15 @@ class BaseProcessManager:
         try:
             raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except ValueError:
-            print('Pricelist Update Error')
+            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
             sys.exit()
 
-        price_list = raw_prices['response']['items']
+        try:
+            price_list = raw_prices['response']['items']
+        except KeyError:
+            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
+            sys.exit()
+
         with open('Resources/PriceList.txt', 'wb') as write_price_list:
             write_price_list.write(json.dumps(price_list).encode())
 
@@ -78,10 +90,15 @@ class BaseProcessManager:
         try:
             raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except ValueError:
-            print('Market Pricelist Update Error')
+            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
             sys.exit()
 
-        market_price_list = raw_market_prices['response']['items']
+        try:
+            market_price_list = raw_market_prices['response']['items']
+        except KeyError:
+            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
+            sys.exit()
+
         with open('Resources/MarketPriceList.txt', 'wb') as write_market_price_list:
             write_market_price_list.write(json.dumps(market_price_list).encode())
 
@@ -90,7 +107,7 @@ class BaseProcessManager:
             try:
                 schema = json.loads(read_schema.read().decode())
             except ValueError:
-                print('Schema Error')
+                self.show_error('There was an error reading %s.\nTry deleting the file and restarting.' % schema_name)
                 sys.exit()
         return schema
 

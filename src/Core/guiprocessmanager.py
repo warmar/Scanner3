@@ -35,6 +35,9 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
         self.gui.update_images()
         self.gui.start()
 
+    def show_error(self, error):
+        messagebox.showerror('Error', error)
+
     def check_update(self):
         self.gui.splash.set_status('Checking For Updates...')
         raw_response = requests.get('http://scanner3server-warmar.rhcloud.com/checkupdate').json()
@@ -58,7 +61,7 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
                 continue
             if 'Paint Can' in item['name']:
                 if not os.path.isfile('Resources/Items/Paint/%s.png' % item['item_name']):
-                    print('Missing Paint: %s' % item['item_name'])
+                    self.show_error('Missing Paint Image: %s' % item['item_name'])
                     sys.exit()
                 continue
             file_name = item['item_name'].replace('?', '')
