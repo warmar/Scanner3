@@ -86,7 +86,7 @@ class BaseOptions(tk.Toplevel):
         self.minimum_item_value_label = tk.Label(self.item_options_frame, text='Min Item Value: ')
         self.minimum_item_value_label.grid(row=0, column=0, sticky='w')
 
-        self.minimum_item_value_entry = ttk.Entry(self.item_options_frame, width=5)
+        self.minimum_item_value_entry = ttk.Entry(self.item_options_frame, width=6)
         self.minimum_item_value_entry.insert(0, self.tab.process_manager.config[self.tab.name]['minimum_item_value'])
         self.minimum_item_value_entry.grid(row=0, column=1, sticky='w')
 
@@ -97,21 +97,21 @@ class BaseOptions(tk.Toplevel):
         self.quality_label = tk.Label(self.item_options_frame, text='Quality: ')
         self.quality_label.grid(row=1, column=0, sticky='w')
 
-        self.quality_entry = ttk.Entry(self.item_options_frame, width=16)
+        self.quality_entry = ttk.Entry(self.item_options_frame, width=17)
         self.quality_entry.insert(0, self.tab.process_manager.config[self.tab.name]['quality'])
         self.quality_entry.grid(row=1, column=1, sticky='w', columnspan=2)
 
         self.price_index_label = tk.Label(self.item_options_frame, text='Price Index: ')
         self.price_index_label.grid(row=2, column=0, sticky='w')
 
-        self.price_index_entry = ttk.Entry(self.item_options_frame, width=16)
+        self.price_index_entry = ttk.Entry(self.item_options_frame, width=17)
         self.price_index_entry.insert(0, self.tab.process_manager.config[self.tab.name]['price_index'])
         self.price_index_entry.grid(row=2, column=1, sticky='w', columnspan=2)
 
         self.level_label = tk.Label(self.item_options_frame, text='Level: ')
         self.level_label.grid(row=3, column=0, sticky='w')
 
-        self.level_entry = ttk.Entry(self.item_options_frame, width=16)
+        self.level_entry = ttk.Entry(self.item_options_frame, width=17)
         self.level_entry.insert(0, self.tab.process_manager.config[self.tab.name]['level'])
         self.level_entry.grid(row=3, column=1, sticky='w', columnspan=2)
 
