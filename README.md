@@ -11,7 +11,7 @@ Screenshots: http://imgur.com/a/torIx
 
 Video: https://youtu.be/pAl3nGK66y4
 
-Output Usage Guide: http://imgur.com/TAT4qJf
+Guide: https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf
 
 Feel free to add me (suggestions should be submitted as github issues though):
 http://steamcommunity.com/id/lifelessmango
