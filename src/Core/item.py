@@ -50,6 +50,33 @@ class Item:
 
         return self.process_manager.item_schema[self.defindex]['item_name']
 
+    def get_display_name(self):
+        name = ''
+        if self.quality in (0, 1, 3, 5, 7, 8, 9, 11, 13, 14):
+            name += QUALITIES[self.quality]['name'] + ' '
+
+        if self.defindex in SKINS:
+            wear = None
+            festive = False
+            for attribute in self.attributes:
+                if attribute['defindex'] == 725:
+                    wear = WEARS[round(attribute['float_value'], 1)]
+                if attribute['defindex'] == 2053:
+                    festive = True
+            if festive:
+                name += 'Festive '
+            name += SKINS[self.defindex]
+            return '%s (%s)' % (name, wear)
+
+        name += self.process_manager.item_schema[self.defindex]['item_name']
+
+        for attribute in self.attributes:
+            if attribute['defindex'] == 187:
+                name += ' #%s' % attribute['float_value']
+
+        return name
+
+
     def get_price_index(self):
         for attribute in self.attributes:
             # Attach Particle Effect

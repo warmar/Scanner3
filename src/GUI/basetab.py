@@ -51,33 +51,37 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
         self.close_button = ttk.Button(self, text='Close', command=self.close)
         self.close_button.grid(row=0, column=0, sticky='e')
 
-        self.input_text = tk.Text(self, width=51, height=20)
+        self.input_text = tk.Text(self, width=51, height=20, wrap='none')
         self.input_text.grid(row=2, column=0, sticky='ns')
 
-        self.input_scrollbar = ttk.Scrollbar(self, command=self.input_text.yview)
-        self.input_text.config(yscrollcommand=self.input_scrollbar.set)
-        self.input_scrollbar.grid(row=2, column=1, sticky='ns')
+        self.input_vertical_scrollbar = ttk.Scrollbar(self, command=self.input_text.yview, orient=tk.VERTICAL)
+        self.input_text.config(yscrollcommand=self.input_vertical_scrollbar.set)
+        self.input_vertical_scrollbar.grid(row=2, column=1, sticky='ns')
+
+        self.input_horizontal_scrollbar = ttk.Scrollbar(self, command=self.input_text.xview, orient=tk.HORIZONTAL)
+        self.input_text.config(xscrollcommand=self.input_horizontal_scrollbar.set)
+        self.input_horizontal_scrollbar.grid(row=3, column=0, sticky='ew')
 
         self.scan_button = ttk.Button(self, image=self.process_manager.gui.shark, command=self.start_scan)
-        self.scan_button.grid(row=3, column=0, columnspan=2, sticky='ew')
+        self.scan_button.grid(row=4, column=0, columnspan=2, sticky='ew')
 
         self.progressbar = ttk.Progressbar(self)
-        self.progressbar.grid(row=4, column=0, columnspan=2, sticky='ew')
+        self.progressbar.grid(row=5, column=0, columnspan=2, sticky='ew')
 
         self.progress_label = tk.Label(self)
-        self.progress_label.grid(row=5, column=0, columnspan=2, sticky='w')
+        self.progress_label.grid(row=6, column=0, columnspan=2, sticky='w')
 
         # Output
         self.output_button = ttk.Button(self, text='«', command=self.process_manager.gui.hide_output, width=1)
-        self.output_button.grid(row=0, column=2, rowspan=6, sticky='ns')
+        self.output_button.grid(row=0, column=2, rowspan=7, sticky='ns')
 
         self.output_canvas = tk.Canvas(self, scrollregion=(0, 0, 0, 0), relief='ridge', bg='#999999', bd=2, highlightthickness=0)
         self.output_canvas.bind('<MouseWheel>', lambda event: self.output_canvas.yview_scroll(int(-event.delta / 120), 'units'))
         self.output_canvas.bind('<Button-2>', lambda event: self.clear_output())
         self.output_scrollbar = ttk.Scrollbar(self, command=self.output_canvas.yview)
         self.output_canvas.config(yscrollcommand=self.output_scrollbar.set)
-        self.output_canvas.grid(row=0, column=3, rowspan=6, sticky='nsew')
-        self.output_scrollbar.grid(row=0, column=4, rowspan=6, sticky='ns')
+        self.output_canvas.grid(row=0, column=3, rowspan=7, sticky='nsew')
+        self.output_scrollbar.grid(row=0, column=4, rowspan=7, sticky='ns')
 
     def create_options(self):
         self.options = None
@@ -122,6 +126,7 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
         player_name = player.name.encode('ascii', 'ignore').decode()
         if player.last_online is not None:
             player_name += ' (%s)' % time.ctime(player.last_online)
+        player_name += ' Keys: %s, Refined: %s' % (player.get_number_keys(), player.get_number_refined())
         self.output_canvas.create_text(
             0,
             (-height),
@@ -166,12 +171,12 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
         self.output_canvas.tag_bind(avatar, '<Button-1>', lambda event: webbrowser.open(profile_link))
         self.output_canvas.tag_bind(avatar, '<Button-3>', lambda event: webbrowser.open(friends_link))
 
-        for item, index in zip(player.items[:self.displayed_items()], range(min(len(player.items), self.displayed_items()))):
+        for item, index in zip(player.display_items[:self.displayed_items()], range(min(len(player.display_items), self.displayed_items()))):
             y_index, x_index = divmod(index, int(self.process_manager.config['output']['items_per_line']))
             item_x = self.text_width() + (self.image_size() * (x_index + 1.3))
             item_y = (-height) + self.text_height() + (y_index * self.image_size())
 
-            description_text = '%s %s' % (QUALITIES[item.quality]['name'], item.get_name())
+            description_text = item.get_display_name()
             description_text += '\n%s' % item.get_price(self.currency)
             if item.quality == 5:
                 effect = item.get_price_index()
@@ -397,10 +402,10 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
 
     def report_finished_player(self, player):
         if self.display_players:
-            player.items = [item for item in player.items if (item.get_raw_price() or 0) >= self.raw_minimum_displayed_item_value]
-            if not player.items:
+            player.display_items = [item for item in player.items if (item.get_raw_price() or 0) >= self.raw_minimum_displayed_item_value]
+            if not player.display_items:
                 return
-            player.items = sorted(player.items, key=lambda x: x.get_raw_price() or 0, reverse=True)
+            player.display_items = sorted(player.display_items, key=lambda x: x.get_raw_price() or 0, reverse=True)
 
             self.display_threads.append(threading.Thread(target=self.display_player, args=(player,)))
             self.display_threads[-1].start()
