@@ -146,9 +146,7 @@ class BaseOptions(tk.Toplevel):
         self.wear_label = tk.Label(self.item_options_frame, text='Wear: ')
         self.wear_label.grid(row=8, column=0, sticky='w')
 
-        wears = list(WEARS.values())
-        wears.insert(0, 'Any')
-        self.wear_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=14, values=wears)
+        self.wear_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=14, values=('Any', *WEARS.values()))
         self.wear_combobox.set(self.tab.process_manager.config[self.tab.name]['wear'])
         self.wear_combobox.grid(row=8, column=1, sticky='ew', columnspan=2)
 
