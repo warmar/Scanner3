@@ -15,6 +15,13 @@ from Core.globals import SCHEMA_URL, PRICELIST_URL, MARKET_PRICELIST_URL
 
 class BaseProcessManager:
     def __init__(self):
+        if not os.path.exists('config.ini'):
+            self.show_error('Could not find config.ini')
+            sys.exit()
+        if not os.path.exists('Resources/'):
+            self.show_error('Could not find Resources folder')
+            sys.exit()
+
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
 
@@ -71,8 +78,8 @@ class BaseProcessManager:
         try:
             raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
-            sys.exit()
+            self.show_error('There was an error updating the price list.')
+            return
 
         try:
             price_list = raw_prices['response']['items']
@@ -91,8 +98,8 @@ class BaseProcessManager:
         try:
             raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
-            sys.exit()
+            self.show_error('There was an error updating the market price list.')
+            return
 
         try:
             market_price_list = raw_market_prices['response']['items']

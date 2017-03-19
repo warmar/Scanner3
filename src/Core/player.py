@@ -62,6 +62,36 @@ class Player:
 
         return has_requirements
 
+    def get_number_refined(self):
+        ref = 0
+        rec = 0
+        scrap = 0
+        for item in self.items:
+            if item.defindex == 5002:
+                ref += 1
+                continue
+            if item.defindex == 5001:
+                rec += 1
+                continue
+            if item.defindex == 5000:
+                scrap += 1
+
+        print(ref, rec, scrap)
+
+        divrec, scrap = divmod(scrap, 3)
+        rec += divrec
+        divref, rec = divmod(rec, 3)
+        ref += divref
+        total = ref + 0.33*rec + 0.11*scrap
+        return total
+
+    def get_number_keys(self):
+        total = 0
+        for item in self.items:
+            if item.get_name() == 'Mann Co. Supply Crate Key':
+                total += 1
+        return total
+
     def get_hours(self):
         url = GET_OWNED_GAMES_URL.format(self.process_manager.config['api']['steam_api_key']) % self.id64
         raw_games = self.process_manager.request_manager.make_api_request(url, mode='json', priority=False, tags=(self.id64,))
