@@ -1,0 +1,5 @@
+-The scanner now checks for config.ini and the Resources/ folder
+-Improvements to item descriptions (crate numbers are now displayed)
+-The input box now has a horizontal scrollbar
+-If a price list update fails, the scanner still launches
+-Key and Metal counts are now displayed to the right of players' names
