@@ -76,8 +76,6 @@ class Player:
             if item.defindex == 5000:
                 scrap += 1
 
-        print(ref, rec, scrap)
-
         divrec, scrap = divmod(scrap, 3)
         rec += divrec
         divref, rec = divmod(rec, 3)
