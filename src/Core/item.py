@@ -157,7 +157,7 @@ class Item:
             if prices['value_raw'] == self.process_manager.key_price:
                 return '1 Key'
             else:
-                return '%s Keys' % (prices['value_raw'] / self.process_manager.key_price)
+                return '%s Keys' % round((prices['value_raw'] / self.process_manager.key_price), 2)
         else:
             if prices['value'] == 1 and prices['currency'] == 'keys':
                 return '1 Key'
