@@ -84,8 +84,8 @@ class BaseProcessManager:
         try:
             price_list = raw_prices['response']['items']
         except KeyError:
-            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
-            sys.exit()
+            self.show_error('There was an error updating the price list.')
+            return
 
         with open('Resources/PriceList.txt', 'wb') as write_price_list:
             write_price_list.write(json.dumps(price_list).encode())
