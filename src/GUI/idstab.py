@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from GUI import idsoptions, basetab
-from Scans import idsprocessor
+from Scans import idsscan
 
 
 class IDsTab(basetab.BaseTab):
@@ -17,6 +17,6 @@ class IDsTab(basetab.BaseTab):
     def start_scan(self):
         self.update_requirements()
 
-        self.scan = idsprocessor.IDsProcessor(self.process_manager, self, self.input_text.get('0.0', 'end-1c'))
+        self.scan = idsscan.IDsScan(self.process_manager, self, self.input_text.get('0.0', 'end-1c'))
         self.scan_button.config(image=self.process_manager.gui.xshark, command=self.scan.end)
         self.scan.start()
