@@ -74,8 +74,8 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
             file_name = item['item_name'].replace('?', '')
             file_name = file_name.replace(':', '')
             file_name = file_name.replace('/', '')
-            if not os.path.exists('Resources/Items/%s.png' % file_name):
-                with open('Resources/Items/%s.png' % file_name, 'wb+') as write_item_image:
+            if not os.path.exists('Resources/Items/Regular/%s.png' % file_name):
+                with open('Resources/Items/Regular/%s.png' % file_name, 'wb+') as write_item_image:
                     image = requests.get(item['image_url']).content
                     write_item_image.write(image)
 
