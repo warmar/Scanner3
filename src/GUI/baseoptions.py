@@ -73,12 +73,19 @@ class BaseOptions(tk.Toplevel):
         self.max_hours_entry.insert(0, self.tab.process_manager.config[self.tab.name]['max_hours'])
         self.max_hours_entry.grid(row=5, column=1, sticky='ew')
 
+        self.max_refined_label = tk.Label(self.player_options_frame, text='Max Refined: ')
+        self.max_refined_label.grid(row=6, column=0, sticky='w')
+
+        self.max_refined_entry = ttk.Entry(self.player_options_frame, width=14)
+        self.max_refined_entry.insert(0, self.tab.process_manager.config[self.tab.name]['max_refined'])
+        self.max_refined_entry.grid(row=6, column=1, sticky='ew')
+
         self.last_online_label = tk.Label(self.player_options_frame, text='Last Online (M-D-Y): ')
-        self.last_online_label.grid(row=6, column=0, sticky='w')
+        self.last_online_label.grid(row=7, column=0, sticky='w')
 
         self.last_online_entry = ttk.Entry(self.player_options_frame, width=14)
         self.last_online_entry.insert(0, self.tab.process_manager.config[self.tab.name]['last_online'])
-        self.last_online_entry.grid(row=6, column=1, sticky='ew')
+        self.last_online_entry.grid(row=7, column=1, sticky='ew')
 
         # Item Options
         self.item_options_frame = tk.LabelFrame(self, text='Item')
@@ -277,6 +284,14 @@ class BaseOptions(tk.Toplevel):
         else:
             self.tab.set_max_hours(None)
 
+        max_refined = self.max_refined_entry.get()
+        if max_refined:
+            if self.check_entry_float(self.max_refined_entry, self.tab.max_refined):
+                self.tab.set_max_refined(float(max_refined))
+        else:
+            self.tab.set_max_refined(None)
+
+
         if self.last_online_entry.get():
             try:
                 raw_minimum_last_online = time.mktime(time.strptime(self.last_online_entry.get(), '%m-%d-%y'))
@@ -407,6 +422,7 @@ class BaseOptions(tk.Toplevel):
         self.tab.process_manager.config[self.tab.name]['f2p'] = str(self.tab.f2p)
         self.tab.process_manager.config[self.tab.name]['status'] = self.tab.status
         self.tab.process_manager.config[self.tab.name]['max_hours'] = str(self.tab.max_hours) if self.tab.max_hours else ''
+        self.tab.process_manager.config[self.tab.name]['max_refined'] = str(self.tab.max_refined) if self.tab.max_refined else ''
         self.tab.process_manager.config[self.tab.name]['last_online'] = self.tab.last_online
 
         # Item
