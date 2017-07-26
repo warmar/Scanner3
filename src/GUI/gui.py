@@ -117,7 +117,7 @@ class GUI(tk.Tk):
 
     def update_images(self):
         image_size = int(self.config['output']['image_size'])
-        regular_item_names = [item_name for item_name in os.listdir('Resources/Items') if os.path.isfile('Resources/Items/%s' % item_name)]
+        regular_item_names = os.listdir('Resources/Items/Regular')
         australium_item_names = os.listdir('Resources/Items/Australium')
         paint_item_names = os.listdir('Resources/Items/Paint')
         skin_item_names = os.listdir('Resources/Items/Skins')
@@ -140,7 +140,7 @@ class GUI(tk.Tk):
 
         for file_name in regular_item_names:
             file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
+            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Regular/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
             update_progress()
         for file_name in australium_item_names:
             file_name = file_name.replace('.png', '')
