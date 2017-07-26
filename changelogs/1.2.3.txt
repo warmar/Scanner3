@@ -1,0 +1,2 @@
+-Add Max Refined Option
+-Add ABOUT/COPYRIGHT

@@ -14,7 +14,7 @@ from GUI import gui
 
 
 class GUIProcessManager(baseprocessmanager.BaseProcessManager):
-    version = '1.2.2'
+    version = '1.2.3'
 
     def __init__(self):
         super().__init__()
