@@ -8,6 +8,8 @@ Note: You have to provide your own steam and backpack.tf API keys (can be obtain
 
 Screenshots: http://imgur.com/a/torIx
 
+Guide: https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf
+
 Video Demo: https://youtu.be/pAl3nGK66y4
 
 Feel free to add me (suggestions should be submitted as github issues though):
