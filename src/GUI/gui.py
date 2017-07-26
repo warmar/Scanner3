@@ -75,8 +75,11 @@ class GUI(tk.Tk):
         github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
         github_link_label.grid(row=0, column=1)
 
+        version_label = tk.Label(about_window, text='Version 1.2.3')
+        version_label.grid(row=1, column=0, sticky='w')
+
         guide_frame = tk.Frame(about_window)
-        guide_frame.grid(row=1, column=0, sticky='ew')
+        guide_frame.grid(row=2, column=0, sticky='ew')
         guide_label = tk.Label(guide_frame, text='Usage Guide Available: ')
         guide_label.grid(row=0, column=0)
         guide_link = tk.Label(guide_frame, text='Link', fg='blue', cursor='hand2')
@@ -84,7 +87,7 @@ class GUI(tk.Tk):
         guide_link.grid(row=0, column=1)
 
         license_frame = tk.Frame(about_window)
-        license_frame.grid(row=2, column=0, sticky='ew')
+        license_frame.grid(row=3, column=0, sticky='ew')
         license_label = tk.Label(license_frame, text='Licensed Under GNU General Public License: ')
         license_label.grid(row=0, column=0)
         license_link = tk.Label(license_frame, text='Link', fg='blue', cursor='hand2')
