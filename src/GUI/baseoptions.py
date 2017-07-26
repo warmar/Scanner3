@@ -291,7 +291,6 @@ class BaseOptions(tk.Toplevel):
         else:
             self.tab.set_max_refined(None)
 
-
         if self.last_online_entry.get():
             try:
                 raw_minimum_last_online = time.mktime(time.strptime(self.last_online_entry.get(), '%m-%d-%y'))
@@ -421,16 +420,16 @@ class BaseOptions(tk.Toplevel):
         self.tab.process_manager.config[self.tab.name]['collect_hours'] = str(self.tab.collect_hours)
         self.tab.process_manager.config[self.tab.name]['f2p'] = str(self.tab.f2p)
         self.tab.process_manager.config[self.tab.name]['status'] = self.tab.status
-        self.tab.process_manager.config[self.tab.name]['max_hours'] = str(self.tab.max_hours) if self.tab.max_hours else ''
-        self.tab.process_manager.config[self.tab.name]['max_refined'] = str(self.tab.max_refined) if self.tab.max_refined else ''
+        self.tab.process_manager.config[self.tab.name]['max_hours'] = str(self.tab.max_hours) if self.tab.max_hours is not None else ''
+        self.tab.process_manager.config[self.tab.name]['max_refined'] = str(self.tab.max_refined) if self.tab.max_refined is not None else ''
         self.tab.process_manager.config[self.tab.name]['last_online'] = self.tab.last_online
 
         # Item
         self.tab.process_manager.config[self.tab.name]['minimum_item_value'] = self.tab.minimum_item_value
         self.tab.process_manager.config[self.tab.name]['minimum_item_value_currency'] = self.tab.minimum_item_value_currency
-        self.tab.process_manager.config[self.tab.name]['quality'] = str(self.tab.quality) if self.tab.quality else ''
-        self.tab.process_manager.config[self.tab.name]['price_index'] = str(self.tab.price_index) if self.tab.price_index else ''
-        self.tab.process_manager.config[self.tab.name]['level'] = str(self.tab.level) if self.tab.level else ''
+        self.tab.process_manager.config[self.tab.name]['quality'] = str(self.tab.quality) if self.tab.quality is not None else ''
+        self.tab.process_manager.config[self.tab.name]['price_index'] = str(self.tab.price_index) if self.tab.price_index is not None else ''
+        self.tab.process_manager.config[self.tab.name]['level'] = str(self.tab.level) if self.tab.level is not None else ''
         self.tab.process_manager.config[self.tab.name]['craftable'] = str(self.tab.craftable)
         self.tab.process_manager.config[self.tab.name]['tradable'] = str(self.tab.tradable)
         self.tab.process_manager.config[self.tab.name]['traded'] = str(self.tab.traded)
