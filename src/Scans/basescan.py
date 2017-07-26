@@ -78,7 +78,6 @@ class BaseScan(threading.Thread):
         hours_threads = []
         item_threads = []
 
-        ids = self.steam_id64s[:]
         players = []
         pending = []
         ready = []
@@ -87,11 +86,11 @@ class BaseScan(threading.Thread):
         done = []
 
         self.done = 0
-        self.total = len(ids)
+        self.total = len(self.steam_id64s)
 
         self.update_progress()
 
-        while ids or players or pending or ready or current_items or current_hours or done:
+        while self.steam_id64s or players or pending or ready or current_items or current_hours or done:
             time.sleep(0.01)
 
             # Check end
@@ -192,11 +191,11 @@ class BaseScan(threading.Thread):
                         del players[:100]
 
             # Create player objects if necessary
-            if len(players) < 200:
-                for id64 in ids[:200]:
+            if len(players) < 100:
+                for id64 in self.steam_id64s[:100]:
                     player = Player(self.process_manager, id64)
-                    ids.remove(id64)
                     players.append(player)
+                del self.steam_id64s[:100]
 
         self.scan_monitor.report_status('Success - %s %s - %s' % (self.total, 'Player' if self.total == 1 else 'Players', self.run_time(self.start_time)), 1, 1)
 
