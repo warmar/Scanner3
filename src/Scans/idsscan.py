@@ -3,7 +3,7 @@
 from Scans import basescan
 
 
-class IDsProcessor(basescan.BaseScan):
+class IDsScan(basescan.BaseScan):
     def __init__(self, process_manager, scan_monitor, input_text):
         super().__init__(process_manager, scan_monitor)
 
