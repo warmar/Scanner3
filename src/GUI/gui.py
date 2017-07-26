@@ -45,7 +45,7 @@ class GUI(tk.Tk):
 
         # Credits
         credits_frame = tk.Frame(self.main_frame)
-        credits_frame.grid(row=2, column=0, sticky='w')
+        credits_frame.grid(row=2, column=0, sticky='ew')
         powered_by = tk.Label(credits_frame, text='Powered by ')
         powered_by.pack(side='left')
         steam = tk.Label(credits_frame, text='Steam', fg='blue', cursor='hand2')
@@ -54,8 +54,42 @@ class GUI(tk.Tk):
         and_label = tk.Label(credits_frame, text=' and ')
         and_label.pack(side='left')
         backpack_tf = tk.Label(credits_frame, text='Backpack.tf', fg='blue', cursor='hand2')
-        backpack_tf.bind('<Button-1>', lambda event: webbrowser.open('http://backpack.tf'))
+        backpack_tf.bind('<Button-1>', lambda event: webbrowser.open('https://backpack.tf'))
         backpack_tf.pack(side='left')
+
+        # About
+        about_window = tk.Toplevel()
+        about_window.title('ABOUT/COPYRIGHT')
+        about_window.wm_withdraw()
+        about_window.protocol('WM_DELETE_WINDOW', about_window.wm_withdraw)
+
+        about_button = tk.Label(credits_frame, text='ABOUT/COPYRIGHT', fg='blue', cursor='hand2')
+        about_button.bind('<Button-1>', lambda event: about_window.deiconify())
+        about_button.pack(side='right')
+
+        copyright_frame = tk.Frame(about_window)
+        copyright_frame.grid(row=0, column=0, sticky='ew')
+        about_label = tk.Label(copyright_frame, text='Copyright © 2016-2017 Peter Marangos ')
+        about_label.grid(row=0, column=0)
+        github_link_label = tk.Label(copyright_frame, text='www.github.com/warmar', fg='blue', cursor='hand2')
+        github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
+        github_link_label.grid(row=0, column=1)
+
+        guide_frame = tk.Frame(about_window)
+        guide_frame.grid(row=1, column=0, sticky='ew')
+        guide_label = tk.Label(guide_frame, text='Usage Guide Available: ')
+        guide_label.grid(row=0, column=0)
+        guide_link = tk.Label(guide_frame, text='Link', fg='blue', cursor='hand2')
+        guide_link.bind('<Button-1>', lambda event: webbrowser.open('https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf'))
+        guide_link.grid(row=0, column=1)
+
+        license_frame = tk.Frame(about_window)
+        license_frame.grid(row=2, column=0, sticky='ew')
+        license_label = tk.Label(license_frame, text='Licensed Under GNU General Public License: ')
+        license_label.grid(row=0, column=0)
+        license_link = tk.Label(license_frame, text='Link', fg='blue', cursor='hand2')
+        license_link.bind('<Button-1>', lambda event: webbrowser.open('https://www.gnu.org/licenses/gpl-3.0.en.html'))
+        license_link.grid(row=0, column=1)
 
         # Technical
         self.output_hidden = False
