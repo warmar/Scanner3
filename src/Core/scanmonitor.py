@@ -16,6 +16,7 @@ class ScanMonitor:
         self.f2p = None
         self.status = None
         self.max_hours = None
+        self.max_refined = None
         self.raw_minimum_last_online = None
         self.rescan = None
 
@@ -65,6 +66,9 @@ class ScanMonitor:
 
     def set_max_hours(self, max_hours):
         self.max_hours = max_hours
+
+    def set_max_refined(self, max_refined):
+        self.max_refined = max_refined
 
     def set_raw_minimum_last_online(self, raw_minimum_last_online):
         self.raw_minimum_last_online = raw_minimum_last_online

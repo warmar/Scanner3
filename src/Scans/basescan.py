@@ -115,7 +115,7 @@ class BaseScan(threading.Thread):
                 done.remove(player)
                 self.done += 1
                 self.update_progress()
-                if not player.check(self.scan_monitor.f2p, self.scan_monitor.status, self.scan_monitor.max_hours):
+                if not player.check(self.scan_monitor.f2p, self.scan_monitor.status, self.scan_monitor.max_hours, self.scan_monitor.max_refined):
                     continue
                 if not player.check_items(self.scan_monitor.item_requirements):
                     continue

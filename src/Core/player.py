@@ -23,7 +23,7 @@ class Player:
         self.simplified_items = data.get('simplified_items', None)
         self.items = data.get('items', None)
 
-    def check(self, f2p, status, max_hours):
+    def check(self, f2p, status, max_hours, max_refined):
         if f2p != 'Both':
             if self.f2p is not f2p:
                 return False
@@ -31,6 +31,9 @@ class Player:
             return False
         if max_hours is not None:
             if self.hours and self.hours > max_hours:
+                return False
+        if max_refined is not None:
+            if self.get_number_refined() > max_refined:
                 return False
         return True
 
@@ -81,7 +84,7 @@ class Player:
         divref, rec = divmod(rec, 3)
         ref += divref
         total = ref + 0.33*rec + 0.11*scrap
-        return total
+        return round(total, 2)
 
     def get_number_keys(self):
         total = 0
