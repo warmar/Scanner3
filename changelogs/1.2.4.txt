@@ -1,0 +1,1 @@
+-Fixed a bug where some options would not save if their value was set to 0
