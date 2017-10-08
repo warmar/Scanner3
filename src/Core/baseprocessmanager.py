@@ -56,14 +56,14 @@ class BaseProcessManager:
             raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
         except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
-            sys.exit()
+            return
 
         try:
             item_schema = raw_schema['result']['items']
             particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
         except KeyError:
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
-            sys.exit()
+            return
 
         with open('Resources/ItemSchema.txt', 'wb') as write_item_schema:
             write_item_schema.write(json.dumps(item_schema).encode())
@@ -105,7 +105,7 @@ class BaseProcessManager:
             market_price_list = raw_market_prices['response']['items']
         except KeyError:
             self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
-            sys.exit()
+            return
 
         with open('Resources/MarketPriceList.txt', 'wb') as write_market_price_list:
             write_market_price_list.write(json.dumps(market_price_list).encode())
