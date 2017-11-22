@@ -244,6 +244,7 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
             file_name = file_name.replace('?', '')
             file_name = file_name.replace(':', '')
             file_name = file_name.replace('/', '')
+            file_name = file_name.replace('\n', '')
             item_image = self.output_canvas.create_image(
                 item_x,
                 item_y,
