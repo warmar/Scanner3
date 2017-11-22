@@ -75,7 +75,7 @@ class GUI(tk.Tk):
         github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
         github_link_label.grid(row=0, column=1)
 
-        version_label = tk.Label(about_window, text='Version 1.2.3')
+        version_label = tk.Label(about_window, text='Version %s' % self.process_manager.version)
         version_label.grid(row=1, column=0, sticky='w')
 
         guide_frame = tk.Frame(about_window)
