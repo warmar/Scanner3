@@ -1,0 +1,2 @@
+-Allow the program to start with pricelist update errors
+-Update version server URL
