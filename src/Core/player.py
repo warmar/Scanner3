@@ -22,8 +22,9 @@ class Player:
         self.last_online = data.get('last_online', None)
         self.simplified_items = data.get('simplified_items', None)
         self.items = data.get('items', None)
+        self.marked = False
 
-    def check(self, f2p, status, max_hours, max_refined):
+    def check(self, f2p, marked, status, max_hours, max_refined):
         if f2p != 'Both':
             if self.f2p is not f2p:
                 return False

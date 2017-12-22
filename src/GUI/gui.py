@@ -8,6 +8,7 @@ import webbrowser
 from PIL import Image, ImageTk
 
 from GUI import splash, idstab
+from Core.globals import IDS_ONLY
 
 
 class GUI(tk.Tk):
@@ -37,6 +38,11 @@ class GUI(tk.Tk):
         self.tab_frame = tk.Frame(self.main_frame)
         self.tab_frame.grid(row=0, column=0, sticky='ew')
 
+        self.tab_choice = tk.StringVar()
+        self.tab_choice_optionmenu = ttk.OptionMenu(self.tab_frame, self.tab_choice, 'IDs', 'IDs', 'Group', 'Database')
+        if not IDS_ONLY:
+            self.tab_choice_optionmenu.pack(side='left')
+
         self.tab_button = ttk.Button(self.tab_frame, text='Add Tab', command=self.add_tab)
         self.tab_button.pack(side='left')
 
@@ -44,55 +50,57 @@ class GUI(tk.Tk):
         self.scan_notebook.grid(row=1, column=0, sticky='nsew')
 
         # Credits
-        credits_frame = tk.Frame(self.main_frame)
-        credits_frame.grid(row=2, column=0, sticky='ew')
-        powered_by = tk.Label(credits_frame, text='Powered by ')
-        powered_by.pack(side='left')
-        steam = tk.Label(credits_frame, text='Steam', fg='blue', cursor='hand2')
-        steam.bind('<Button-1>', lambda event: webbrowser.open('http://steampowered.com'))
-        steam.pack(side='left')
-        and_label = tk.Label(credits_frame, text=' and ')
-        and_label.pack(side='left')
-        backpack_tf = tk.Label(credits_frame, text='Backpack.tf', fg='blue', cursor='hand2')
-        backpack_tf.bind('<Button-1>', lambda event: webbrowser.open('https://backpack.tf'))
-        backpack_tf.pack(side='left')
+        if IDS_ONLY:
+            credits_frame = tk.Frame(self.main_frame)
+            credits_frame.grid(row=2, column=0, sticky='ew')
+            powered_by = tk.Label(credits_frame, text='Powered by ')
+            powered_by.pack(side='left')
+            steam = tk.Label(credits_frame, text='Steam', fg='blue', cursor='hand2')
+            steam.bind('<Button-1>', lambda event: webbrowser.open('http://steampowered.com'))
+            steam.pack(side='left')
+            and_label = tk.Label(credits_frame, text=' and ')
+            and_label.pack(side='left')
+            backpack_tf = tk.Label(credits_frame, text='Backpack.tf', fg='blue', cursor='hand2')
+            backpack_tf.bind('<Button-1>', lambda event: webbrowser.open('https://backpack.tf'))
+            backpack_tf.pack(side='left')
 
         # About
-        about_window = tk.Toplevel()
-        about_window.title('ABOUT/COPYRIGHT')
-        about_window.wm_withdraw()
-        about_window.protocol('WM_DELETE_WINDOW', about_window.wm_withdraw)
+        if IDS_ONLY:
+            about_window = tk.Toplevel()
+            about_window.title('ABOUT/COPYRIGHT')
+            about_window.wm_withdraw()
+            about_window.protocol('WM_DELETE_WINDOW', about_window.wm_withdraw)
 
-        about_button = tk.Label(credits_frame, text='ABOUT/COPYRIGHT', fg='blue', cursor='hand2')
-        about_button.bind('<Button-1>', lambda event: about_window.deiconify())
-        about_button.pack(side='right')
+            about_button = tk.Label(credits_frame, text='ABOUT/COPYRIGHT', fg='blue', cursor='hand2')
+            about_button.bind('<Button-1>', lambda event: about_window.deiconify())
+            about_button.pack(side='right')
 
-        copyright_frame = tk.Frame(about_window)
-        copyright_frame.grid(row=0, column=0, sticky='ew')
-        about_label = tk.Label(copyright_frame, text='Copyright © 2016-2017 Peter Marangos ')
-        about_label.grid(row=0, column=0)
-        github_link_label = tk.Label(copyright_frame, text='www.github.com/warmar', fg='blue', cursor='hand2')
-        github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
-        github_link_label.grid(row=0, column=1)
+            copyright_frame = tk.Frame(about_window)
+            copyright_frame.grid(row=0, column=0, sticky='ew')
+            about_label = tk.Label(copyright_frame, text='Copyright © 2016-2017 Peter Marangos ')
+            about_label.grid(row=0, column=0)
+            github_link_label = tk.Label(copyright_frame, text='www.github.com/warmar', fg='blue', cursor='hand2')
+            github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
+            github_link_label.grid(row=0, column=1)
 
-        version_label = tk.Label(about_window, text='Version %s' % self.process_manager.version)
-        version_label.grid(row=1, column=0, sticky='w')
+            version_label = tk.Label(about_window, text='Version %s' % self.process_manager.version)
+            version_label.grid(row=1, column=0, sticky='w')
 
-        guide_frame = tk.Frame(about_window)
-        guide_frame.grid(row=2, column=0, sticky='ew')
-        guide_label = tk.Label(guide_frame, text='Usage Guide Available: ')
-        guide_label.grid(row=0, column=0)
-        guide_link = tk.Label(guide_frame, text='Link', fg='blue', cursor='hand2')
-        guide_link.bind('<Button-1>', lambda event: webbrowser.open('https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf'))
-        guide_link.grid(row=0, column=1)
+            guide_frame = tk.Frame(about_window)
+            guide_frame.grid(row=2, column=0, sticky='ew')
+            guide_label = tk.Label(guide_frame, text='Usage Guide Available: ')
+            guide_label.grid(row=0, column=0)
+            guide_link = tk.Label(guide_frame, text='Link', fg='blue', cursor='hand2')
+            guide_link.bind('<Button-1>', lambda event: webbrowser.open('https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf'))
+            guide_link.grid(row=0, column=1)
 
-        license_frame = tk.Frame(about_window)
-        license_frame.grid(row=3, column=0, sticky='ew')
-        license_label = tk.Label(license_frame, text='Licensed Under GNU General Public License: ')
-        license_label.grid(row=0, column=0)
-        license_link = tk.Label(license_frame, text='Link', fg='blue', cursor='hand2')
-        license_link.bind('<Button-1>', lambda event: webbrowser.open('https://www.gnu.org/licenses/gpl-3.0.en.html'))
-        license_link.grid(row=0, column=1)
+            license_frame = tk.Frame(about_window)
+            license_frame.grid(row=3, column=0, sticky='ew')
+            license_label = tk.Label(license_frame, text='Licensed Under GNU General Public License: ')
+            license_label.grid(row=0, column=0)
+            license_link = tk.Label(license_frame, text='Link', fg='blue', cursor='hand2')
+            license_link.bind('<Button-1>', lambda event: webbrowser.open('https://www.gnu.org/licenses/gpl-3.0.en.html'))
+            license_link.grid(row=0, column=1)
 
         # Technical
         self.output_hidden = False
@@ -106,12 +114,15 @@ class GUI(tk.Tk):
         self.splash.grid_remove()
         self.splash = None
         self.main_frame.grid(row=0, column=0, sticky='nsew')
-        self.add_tab()
+        if IDS_ONLY:
+            self.add_tab()
         self.mainloop()
 
     def add_tab(self):
-        tab = idstab.IDsTab(self.process_manager)
-        self.scan_notebook.add(tab, text='IDs')
+        if self.tab_choice.get() == 'IDs':
+            tab = idstab.IDsTab(self.process_manager)
+            self.scan_notebook.add(tab, text='IDs')
+
         self.tabs.append(tab)
         self.scan_notebook.select(tab)
         if self.output_hidden:

@@ -1,3 +1,5 @@
+IDS_ONLY = True
+
 STATUSES = {
     -2: {'name': 'Unknown', 'color': '#FFFFFF'},
     -1: {'name': 'In-Game', 'color': '#8CB359'},
