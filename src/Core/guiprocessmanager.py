@@ -10,6 +10,7 @@ import requests
 from requests.exceptions import RequestException
 
 from Core import baseprocessmanager
+from Core.globals import IDS_ONLY
 from GUI import gui
 
 
@@ -29,7 +30,8 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
         self.gui = gui.GUI(self)
         self.gui.splash.set_status('Loading...')
 
-        self.check_update()
+        if IDS_ONLY:
+            self.check_update()
         self.start()
 
         self.update_images()

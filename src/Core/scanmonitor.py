@@ -14,11 +14,14 @@ class ScanMonitor:
         # Player
         self.collect_hours = None
         self.f2p = None
+        self.marked = None
         self.status = None
         self.max_hours = None
         self.max_refined = None
         self.raw_minimum_last_online = None
         self.rescan = None
+        self.rescan_failed = None
+        self.database_age = None
 
         # Item
         self.raw_minimum_item_value = None
@@ -61,6 +64,9 @@ class ScanMonitor:
     def set_f2p(self, f2p):
         self.f2p = f2p
 
+    def set_marked(self, marked):
+        self.marked = marked
+
     def set_status(self, status):
         self.status = status
 
@@ -75,6 +81,9 @@ class ScanMonitor:
 
     def set_rescan(self, rescan):
         self.rescan = rescan
+
+    def set_database_age(self, database_age):
+        self.database_age = database_age
 
     # Item
     def set_raw_minimum_item_value(self, raw_minimum_item_value):
