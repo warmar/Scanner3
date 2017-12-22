@@ -78,13 +78,13 @@ class BaseProcessManager:
         try:
             raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the price list.')
+            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
             return
 
         try:
             price_list = raw_prices['response']['items']
         except KeyError:
-            self.show_error('There was an error updating the price list.')
+            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
             return
 
         with open('Resources/PriceList.txt', 'wb') as write_price_list:
@@ -98,7 +98,7 @@ class BaseProcessManager:
         try:
             raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
         except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the market price list.')
+            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
             return
 
         try:
