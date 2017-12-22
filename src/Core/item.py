@@ -76,7 +76,6 @@ class Item:
 
         return name
 
-
     def get_price_index(self):
         for attribute in self.attributes:
             # Attach Particle Effect
