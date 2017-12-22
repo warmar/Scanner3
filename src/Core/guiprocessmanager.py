@@ -10,13 +10,11 @@ import requests
 from requests.exceptions import RequestException
 
 from Core import baseprocessmanager
-from Core.globals import IDS_ONLY
+from Core.globals import IDS_ONLY, VERSION
 from GUI import gui
 
 
 class GUIProcessManager(baseprocessmanager.BaseProcessManager):
-    version = '1.2.5'
-
     def __init__(self):
         super().__init__()
 
@@ -51,7 +49,7 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
             return
 
         major, minor, patch = raw_response['version'].split('.')
-        current_major, current_minor, current_patch = self.version.split('.')
+        current_major, current_minor, current_patch = VERSION.split('.')
         if current_major >= major:
             if current_minor >= minor:
                 if current_patch >= patch:
