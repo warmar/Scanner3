@@ -1,6 +1,5 @@
 __pycache__/
 .idea/
-setup.py
 distwin/
 *.pyc
 src/Resources/ItemSchema.txt
