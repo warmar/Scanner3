@@ -25,17 +25,19 @@ class BaseProcessManager:
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
 
+        self.scan_monitors = []
+
     def start(self):
         self.update_schema()
         self.update_pricelist()
-        self.update_market_pricelist()
+        # self.update_market_pricelist()
 
         self.item_schema = self.read_schema('ItemSchema.txt')
         self.particle_effect_schema = self.read_schema('ParticleEffectSchema.txt')
         self.process_schemas()
 
         self.price_list = self.read_schema('PriceList.txt')
-        self.market_price_list = self.read_schema('MarketPriceList.txt')
+        # self.market_price_list = self.read_schema('MarketPriceList.txt')
 
         self.refined_price = self.price_list['Refined Metal']['prices']['6']['Tradable']['Craftable'][0]['value']
         self.key_price = self.price_list['Mann Co. Supply Crate Key']['prices']['6']['Tradable']['Craftable'][0][
@@ -53,7 +55,7 @@ class BaseProcessManager:
                 return
 
         try:
-            raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key']).json()
+            raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key'], timeout=30).json()
         except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
             return
@@ -76,7 +78,7 @@ class BaseProcessManager:
                 return
 
         try:
-            raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
+            raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key'], timeout=30).json()
         except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
             return
@@ -96,7 +98,7 @@ class BaseProcessManager:
                 return
 
         try:
-            raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key']).json()
+            raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key'], timeout=30).json()
         except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
             return
