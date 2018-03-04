@@ -1,0 +1,2 @@
+-Temporarily disable market pricelist until a new data source can be found
+-Increase item schema and pricelist update request timeouts
