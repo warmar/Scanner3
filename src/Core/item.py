@@ -123,6 +123,7 @@ class Item:
         return prices
 
     def get_market_prices(self):
+        return None # TODO: Add new implementation of market prices
         if self.quality in (6, 15):
             full_name = self.get_name()
         else:
