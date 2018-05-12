@@ -16,4 +16,4 @@ Feel free to add me (suggestions should be submitted as github issues though):
 http://steamcommunity.com/id/lifelessmango
 
 Donations:
-14kAL368ir7LQHTt5LdEuQd4UjjXAcZDuG
+32s6NLjyaamJKbYp8fXgPRYE5f8BJfj1n4
