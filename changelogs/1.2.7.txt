@@ -1,0 +1,1 @@
+-Fix schema updating (API now uses two separate endpoints: GetSchemaOverview and GetSchemaItems)
