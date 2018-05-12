@@ -10,7 +10,7 @@ import requests
 from requests.exceptions import RequestException
 
 from Core import requestmanager
-from Core.globals import SCHEMA_URL, PRICELIST_URL, MARKET_PRICELIST_URL
+from Core.globals import SCHEMA_ITEMS_URL, SCHEMA_OVERVIEW_URL, PRICELIST_URL, MARKET_PRICELIST_URL
 
 
 class BaseProcessManager:
@@ -54,16 +54,30 @@ class BaseProcessManager:
             if os.path.getmtime('Resources/ItemSchema.txt') > (time.time() - 300) and os.path.getmtime('Resources/ParticleEffectSchema.txt') > (time.time()-300):
                 return
 
+        # Get schema overview for particle effects
         try:
-            raw_schema = requests.get(SCHEMA_URL % self.config['api']['steam_api_key'], timeout=30).json()
-        except (ValueError, ConnectionError, RequestException):
+            raw_schema_overview = requests.get(SCHEMA_OVERVIEW_URL % self.config['api']['steam_api_key'], timeout=30).json()
+            particle_effect_schema = raw_schema_overview['result']['attribute_controlled_attached_particles']
+        except:
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
             return
 
+        # Get paginated schema items
         try:
-            item_schema = raw_schema['result']['items']
-            particle_effect_schema = raw_schema['result']['attribute_controlled_attached_particles']
-        except KeyError:
+            next_defindex = 0
+            done = False
+            item_schema = []
+            while not done:
+                # Extend schema by items on current page
+                raw_schema_items_page = requests.get(SCHEMA_ITEMS_URL.format(self.config['api']['steam_api_key'], next_defindex), timeout=30).json()
+                item_schema.extend(raw_schema_items_page['result']['items'])
+
+                # Check for next item index
+                if 'next' in raw_schema_items_page['result']:
+                    next_defindex = raw_schema_items_page['result']['next']
+                else:
+                    done = True
+        except:
             self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
             return
 
