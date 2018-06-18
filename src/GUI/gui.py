@@ -19,7 +19,7 @@ class GUI(tk.Tk):
 
         self.resizable(width=False, height=True)
         self.protocol('WM_DELETE_WINDOW', self.process_manager.end)
-        self.title('Scanner')
+        self.title('Scanner3')
         self.iconbitmap('Resources/Icon.ico')
         self.grid_rowconfigure(0, weight=1)
 
@@ -91,7 +91,7 @@ class GUI(tk.Tk):
             guide_label = tk.Label(guide_frame, text='Usage Guide Available: ')
             guide_label.grid(row=0, column=0)
             guide_link = tk.Label(guide_frame, text='Link', fg='blue', cursor='hand2')
-            guide_link.bind('<Button-1>', lambda event: webbrowser.open('https://raw.githubusercontent.com/warmar/Scanner3IDsOnly/master/Guide.pdf'))
+            guide_link.bind('<Button-1>', lambda event: webbrowser.open('https://raw.githubusercontent.com/warmar/Scanner3/master/Guide.pdf'))
             guide_link.grid(row=0, column=1)
 
             license_frame = tk.Frame(about_window)
