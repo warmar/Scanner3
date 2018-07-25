@@ -90,7 +90,6 @@ WEARS = {0.2: 'Factory New', 0.4: 'Minimal Wear', 0.6: 'Field-Tested', 0.8: 'Wel
 SCHEMA_OVERVIEW_URL = 'http://api.steampowered.com/IEconItems_440/GetSchemaOverview/v0001/?key=%s&language=en'
 SCHEMA_ITEMS_URL = 'http://api.steampowered.com/IEconItems_440/GetSchemaItems/v0001/?key={}&start={}&language=en'
 PRICELIST_URL = 'http://backpack.tf/api/IGetPrices/v4/?key=%s&raw=1'
-MARKET_PRICELIST_URL = 'http://backpack.tf/api/IGetMarketPrices/v1/?key=%s'
 
 GET_OWNED_GAMES_URL = 'http://api.steampowered.com/iplayerservice/getownedgames/v1/?key={0}&include_played_free_games=1&steamid=%s'
 GET_ITEMS_URL = 'http://api.steampowered.com/ieconitems_440/getplayeritems/v0001/?key={0}&steamid=%s'

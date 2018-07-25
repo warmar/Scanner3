@@ -9,6 +9,7 @@ from tkinter import messagebox
 import requests
 from requests.exceptions import RequestException
 
+from Core.analytics import report_close
 from Core import baseprocessmanager
 from Core.globals import IDS_ONLY, VERSION
 from GUI import gui
@@ -69,7 +70,7 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
             if 'Paint Can' in item['name']:
                 if not os.path.isfile('Resources/Items/Paint/%s.png' % item['item_name']):
                     self.show_error('Missing Paint Image: %s' % item['item_name'])
-                    sys.exit()
+                    sys.exit(1)
                 continue
             file_name = item['item_name'].replace('?', '')
             file_name = file_name.replace(':', '')
@@ -100,6 +101,9 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
                     time.sleep(0.01)
             self.request_manager.end()
             self.gui.quit()
-            sys.exit()
+
+            report_close()
+
+            sys.exit(0)
 
         threading.Thread(target=func).start()

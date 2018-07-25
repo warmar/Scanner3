@@ -7,30 +7,36 @@ import sys
 import time
 
 import requests
-from requests.exceptions import RequestException
 
+from Core.analytics import report_launch
 from Core import requestmanager
-from Core.globals import SCHEMA_ITEMS_URL, SCHEMA_OVERVIEW_URL, PRICELIST_URL, MARKET_PRICELIST_URL
+from Core.globals import SCHEMA_ITEMS_URL, SCHEMA_OVERVIEW_URL, PRICELIST_URL
 
 
 class BaseProcessManager:
     def __init__(self):
         if not os.path.exists('config.ini'):
             self.show_error('Could not find config.ini')
-            sys.exit()
+            sys.exit(1)
         if not os.path.exists('Resources/'):
             self.show_error('Could not find Resources folder')
-            sys.exit()
+            sys.exit(1)
 
         self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        try:
+            self.config.read('config.ini')
+        except:
+            self.show_error('Invalid config file.\n'
+                            'Try re-downloading the default file.')
+            sys.exit(1)
 
         self.scan_monitors = []
 
     def start(self):
+        report_launch()
+
         self.update_schema()
         self.update_pricelist()
-        # self.update_market_pricelist()
 
         self.item_schema = self.read_schema('ItemSchema.txt')
         self.particle_effect_schema = self.read_schema('ParticleEffectSchema.txt')
@@ -50,81 +56,139 @@ class BaseProcessManager:
         print(error)
 
     def update_schema(self):
+        # Only update if cached version is more than 5 minutes old
         if os.path.isfile('Resources/ItemSchema.txt') and os.path.isfile('Resources/ParticleEffectSchema.txt'):
             if os.path.getmtime('Resources/ItemSchema.txt') > (time.time() - 300) and os.path.getmtime('Resources/ParticleEffectSchema.txt') > (time.time()-300):
-                return
+                return True
 
-        # Get schema overview for particle effects
-        try:
-            raw_schema_overview = requests.get(SCHEMA_OVERVIEW_URL % self.config['api']['steam_api_key'], timeout=30).json()
-            particle_effect_schema = raw_schema_overview['result']['attribute_controlled_attached_particles']
-        except:
-            self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
-            return
+        success = self.update_particle_effects()
+        if not success:
+            return False
 
+        success = self.update_item_schema()
+        if not success:
+            return False
+
+        return True
+
+    def update_item_schema(self):
         # Get paginated schema items
-        try:
-            next_defindex = 0
-            done = False
-            item_schema = []
-            while not done:
-                # Extend schema by items on current page
-                raw_schema_items_page = requests.get(SCHEMA_ITEMS_URL.format(self.config['api']['steam_api_key'], next_defindex), timeout=30).json()
+        next_defindex = 0
+        done = False
+        item_schema = []
+        while not done:
+            # Make request
+            try:
+                response = requests.get(SCHEMA_ITEMS_URL.format(self.config['api']['steam_api_key'], next_defindex),
+                                        timeout=30)
+            except:
+                self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
+                return False
+
+            # Check request status
+            if response.status_code != 200:
+                self.show_error('There was an error updating the item schema.\n'
+                                'Your API key may be invalid.\n'
+                                '\n'
+                                'Response:\n'
+                                '\n'
+                                '%s' % response.text)
+                return False
+
+            # Decode response and extend schema by items on current page
+            try:
+                raw_schema_items_page = response.json()
                 item_schema.extend(raw_schema_items_page['result']['items'])
+            except:
+                self.show_error('There was an error updating the item schema.\n'
+                                'Try again in a few minutes.')
+                return False
 
-                # Check for next item index
-                if 'next' in raw_schema_items_page['result']:
-                    next_defindex = raw_schema_items_page['result']['next']
-                else:
-                    done = True
-        except:
-            self.show_error('There was an error updating the item schema.\nTry again in a few minutes.')
-            return
+            # Check for next item index
+            if 'next' in raw_schema_items_page['result']:
+                next_defindex = raw_schema_items_page['result']['next']
+            else:
+                done = True
 
+        # Cache results
         with open('Resources/ItemSchema.txt', 'wb') as write_item_schema:
             write_item_schema.write(json.dumps(item_schema).encode())
+
+        return True
+
+    def update_particle_effects(self):
+        # Make request
+        try:
+            response = requests.get(SCHEMA_OVERVIEW_URL % self.config['api']['steam_api_key'], timeout=30)
+        except:
+            self.show_error('There was an error updating the item schema.\n'
+                            'Try again in a few minutes.')
+            return False
+
+        # Check request status
+        if response.status_code != 200:
+            self.show_error('There was an error updating the item schema.\n'
+                            'Your API key may be invalid.\n'
+                            '\n'
+                            'Response:\n'
+                            '\n'
+                            '%s' % response.text)
+            return False
+
+        # Decode response and extract particle effects
+        try:
+            raw_schema_overview = response.json()
+            particle_effect_schema = raw_schema_overview['result']['attribute_controlled_attached_particles']
+        except:
+            self.show_error('There was an error updating the item schema.\n'
+                            'Try again in a few minutes.')
+            return False
+
+        # Cache particle effects
         with open('Resources/ParticleEffectSchema.txt', 'wb') as write_particle_effect_schema:
             write_particle_effect_schema.write(json.dumps(particle_effect_schema).encode())
 
+        return True
+
     def update_pricelist(self):
+        # Only update if cached version is more than 5 minutes old
         if os.path.isfile('Resources/PriceList.txt'):
             if os.path.getmtime('Resources/PriceList.txt') > (time.time() - 300):
-                return
+                return True
 
+        # Make request
         try:
-            raw_prices = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key'], timeout=30).json()
-        except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
-            return
+            response = requests.get(PRICELIST_URL % self.config['api']['backpack_tf_api_key'], timeout=30)
+        except:
+            self.show_error('There was an error updating the price list.\n'
+                            'Try again in a few minutes.')
+            return False
 
+        # Check request status
+        if response.status_code != 200:
+            self.show_error('There was an error updating the price list.\n'
+                            'Your API key may be invalid.\n'
+                            '\n'
+                            'Response:\n'
+                            '\n'
+                            '%s' % response.text)
+            return False
+
+
+        # Decode response and extract pricelist
         try:
+            raw_prices = response.json()
             price_list = raw_prices['response']['items']
-        except KeyError:
-            self.show_error('There was an error updating the price list.\nTry again in a few minutes.')
-            return
+        except:
+            self.show_error('There was an error updating the price list.\n'
+                            'Try again in a few minutes.')
+            return False
 
+        # Cache results
         with open('Resources/PriceList.txt', 'wb') as write_price_list:
             write_price_list.write(json.dumps(price_list).encode())
 
-    def update_market_pricelist(self):
-        if os.path.isfile('Resources/MarketPriceList.txt'):
-            if os.path.getmtime('Resources/MarketPriceList.txt') > (time.time()-300):
-                return
-
-        try:
-            raw_market_prices = requests.get(MARKET_PRICELIST_URL % self.config['api']['backpack_tf_api_key'], timeout=30).json()
-        except (ValueError, ConnectionError, RequestException):
-            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
-            return
-
-        try:
-            market_price_list = raw_market_prices['response']['items']
-        except KeyError:
-            self.show_error('There was an error updating the market price list.\nTry again in a few minutes.')
-            return
-
-        with open('Resources/MarketPriceList.txt', 'wb') as write_market_price_list:
-            write_market_price_list.write(json.dumps(market_price_list).encode())
+        return True
 
     def read_schema(self, schema_name):
         with open('Resources/{0}'.format(schema_name), 'rb') as read_schema:
@@ -132,7 +196,7 @@ class BaseProcessManager:
                 schema = json.loads(read_schema.read().decode())
             except ValueError:
                 self.show_error('There was an error reading %s.\nTry deleting the file and restarting.' % schema_name)
-                sys.exit()
+                sys.exit(1)
         return schema
 
     def process_schemas(self):
