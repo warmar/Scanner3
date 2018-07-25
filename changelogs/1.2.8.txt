@@ -1,5 +1,5 @@
 - Scanner3 now checks to ensure that API keys are valid
 - Added error check for invalid config.ini files
 - Added anonymous analytics reporting
-    - Each client random generates a 24-character alphanumeric client id
+    - Each client randomly generates a 24-character alphanumeric client id
     - Clients report id, launch time, and close time
