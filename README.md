@@ -12,8 +12,7 @@ Guide: https://raw.githubusercontent.com/warmar/Scanner3/master/Guide.pdf
 
 Video Demo: https://youtu.be/pAl3nGK66y4
 
-Feel free to add me (suggestions should be submitted as github issues though):
-http://steamcommunity.com/id/lifelessmango
+Feel free to [add me](http://steamcommunity.com/id/warmar_) (suggestions should be submitted as github issues though)
 
 Donations:
 14kAL368ir7LQHTt5LdEuQd4UjjXAcZDuG
