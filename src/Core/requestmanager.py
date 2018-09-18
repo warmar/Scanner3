@@ -86,7 +86,23 @@ class RequestManager(threading.Thread):
         self.running_requests.append(request)
 
         try:
-            raw_response = requests.get(url, timeout=5)
+            while True:
+                if request['cancel']:
+                    self.running_requests.remove(request)
+                    return
+
+                raw_response = requests.get(url, timeout=5)
+
+                if raw_response.status_code == 200:
+                    break
+
+                if 500 <= raw_response.status_code < 600:  # Error code 5xx doesn't count towards limits
+                    time.sleep(0.05)
+                    continue
+
+                # All other errors => resubmit request
+                self.running_requests.remove(request)
+                return self.make_api_request(url, mode=mode, priority=priority, tags=tags)
         except (ConnectionError, TimeoutError, requests.exceptions.Timeout, requests.exceptions.ConnectionError):
             self.running_requests.remove(request)
             if request['cancel']:
