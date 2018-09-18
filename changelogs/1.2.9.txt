@@ -1,0 +1,6 @@
+Options
+    - "Output" is now called "Items"
+    - "Item" is now called "Single Item"
+    - Add description to Single Item tab
+Requests
+    - Improved http error handling (requests with error code 5xx are now retried without rate limiting)

@@ -1,5 +1,5 @@
 IDS_ONLY = True
-VERSION = '1.2.8'
+VERSION = '1.2.9'
 
 STATUSES = {
     -2: {'name': 'Unknown', 'color': '#FFFFFF'},
