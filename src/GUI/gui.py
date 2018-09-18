@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 import webbrowser
@@ -20,7 +21,8 @@ class GUI(tk.Tk):
         self.resizable(width=False, height=True)
         self.protocol('WM_DELETE_WINDOW', self.process_manager.end)
         self.title('Scanner3')
-        self.iconbitmap('Resources/Icon.ico')
+        if sys.platform == "win32":
+            self.iconbitmap('Resources/Icon.ico')
         self.grid_rowconfigure(0, weight=1)
 
         # Images

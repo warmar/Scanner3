@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import time
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -18,11 +19,12 @@ class BaseOptions(tk.Toplevel):
         self.protocol('WM_DELETE_WINDOW', self.wm_withdraw)
 
         self.title('Options')
-        self.iconbitmap('Resources/Icon.ico')
+        if sys.platform == "win32":
+            self.iconbitmap('Resources/Icon.ico')
         self.grid_columnconfigure(1, weight=1)
 
         self.category_listbox = tk.Listbox(self, selectmode='single')
-        self.category_listbox.insert('end', 'Player', 'Item', 'Output', 'Technical')
+        self.category_listbox.insert('end', 'Player', 'Items', 'Single Item', 'Technical')
         self.category_listbox.grid(row=0, column=0, sticky='nsw')
         self.category_listbox.bind('<<ListboxSelect>>', self.display_category)
 
@@ -87,129 +89,133 @@ class BaseOptions(tk.Toplevel):
         self.last_online_entry.insert(0, self.tab.process_manager.config[self.tab.name]['last_online'])
         self.last_online_entry.grid(row=7, column=1, sticky='ew')
 
-        # Item Options
-        self.item_options_frame = tk.LabelFrame(self, text='Item')
+        # Single Item Options
+        self.single_item_options_frame = tk.LabelFrame(self, text='Single Item')
 
-        self.minimum_item_value_label = tk.Label(self.item_options_frame, text='Min Item Value: ')
-        self.minimum_item_value_label.grid(row=0, column=0, sticky='w')
+        self.single_item_options_label = tk.Label(self.single_item_options_frame, text='A player is displayed only if all of the following\n'
+                                                                                       'options match a single item in his inventory.')
+        self.single_item_options_label.grid(row=0, column=0, columnspan=3, sticky='w')
 
-        self.minimum_item_value_entry = ttk.Entry(self.item_options_frame, width=6)
+        self.minimum_item_value_label = tk.Label(self.single_item_options_frame, text='Min Item Value: ')
+        self.minimum_item_value_label.grid(row=1, column=0, sticky='w')
+
+        self.minimum_item_value_entry = ttk.Entry(self.single_item_options_frame)
         self.minimum_item_value_entry.insert(0, self.tab.process_manager.config[self.tab.name]['minimum_item_value'])
-        self.minimum_item_value_entry.grid(row=0, column=1, sticky='w')
+        self.minimum_item_value_entry.grid(row=1, column=1, sticky='we')
 
-        self.minimum_item_value_currency_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=7, values=('Keys', 'Refined', 'USD'))
+        self.minimum_item_value_currency_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=7, values=('Keys', 'Refined', 'USD'))
         self.minimum_item_value_currency_combobox.set(self.tab.process_manager.config[self.tab.name]['minimum_item_value_currency'])
-        self.minimum_item_value_currency_combobox.grid(row=0, column=2, sticky='ew')
+        self.minimum_item_value_currency_combobox.grid(row=1, column=2, sticky='ew')
 
-        self.quality_label = tk.Label(self.item_options_frame, text='Quality: ')
-        self.quality_label.grid(row=1, column=0, sticky='w')
+        self.quality_label = tk.Label(self.single_item_options_frame, text='Quality: ')
+        self.quality_label.grid(row=2, column=0, sticky='w')
 
-        self.quality_entry = ttk.Entry(self.item_options_frame, width=17)
+        self.quality_entry = ttk.Entry(self.single_item_options_frame)
         self.quality_entry.insert(0, self.tab.process_manager.config[self.tab.name]['quality'])
-        self.quality_entry.grid(row=1, column=1, sticky='w', columnspan=2)
+        self.quality_entry.grid(row=2, column=1, sticky='ew', columnspan=2)
 
-        self.price_index_label = tk.Label(self.item_options_frame, text='Price Index: ')
-        self.price_index_label.grid(row=2, column=0, sticky='w')
+        self.price_index_label = tk.Label(self.single_item_options_frame, text='Price Index: ')
+        self.price_index_label.grid(row=3, column=0, sticky='w')
 
-        self.price_index_entry = ttk.Entry(self.item_options_frame, width=17)
+        self.price_index_entry = ttk.Entry(self.single_item_options_frame)
         self.price_index_entry.insert(0, self.tab.process_manager.config[self.tab.name]['price_index'])
-        self.price_index_entry.grid(row=2, column=1, sticky='w', columnspan=2)
+        self.price_index_entry.grid(row=3, column=1, sticky='ew', columnspan=2)
 
-        self.level_label = tk.Label(self.item_options_frame, text='Level: ')
-        self.level_label.grid(row=3, column=0, sticky='w')
+        self.level_label = tk.Label(self.single_item_options_frame, text='Level: ')
+        self.level_label.grid(row=4, column=0, sticky='w')
 
-        self.level_entry = ttk.Entry(self.item_options_frame, width=17)
+        self.level_entry = ttk.Entry(self.single_item_options_frame)
         self.level_entry.insert(0, self.tab.process_manager.config[self.tab.name]['level'])
-        self.level_entry.grid(row=3, column=1, sticky='w', columnspan=2)
+        self.level_entry.grid(row=4, column=1, sticky='ew', columnspan=2)
 
-        self.craftable_label = tk.Label(self.item_options_frame, text='Craftable: ')
-        self.craftable_label.grid(row=4, column=0, sticky='w')
+        self.craftable_label = tk.Label(self.single_item_options_frame, text='Craftable: ')
+        self.craftable_label.grid(row=5, column=0, sticky='w')
 
-        self.craftable_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
+        self.craftable_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
         self.craftable_combobox.set(self.tab.process_manager.config[self.tab.name]['craftable'])
-        self.craftable_combobox.grid(row=4, column=1, sticky='ew', columnspan=2)
+        self.craftable_combobox.grid(row=5, column=1, sticky='ew', columnspan=2)
 
-        self.tradable_label = tk.Label(self.item_options_frame, text='Tradable: ')
-        self.tradable_label.grid(row=5, column=0, sticky='w')
+        self.tradable_label = tk.Label(self.single_item_options_frame, text='Tradable: ')
+        self.tradable_label.grid(row=6, column=0, sticky='w')
 
-        self.tradable_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
+        self.tradable_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
         self.tradable_combobox.set(self.tab.process_manager.config[self.tab.name]['tradable'])
-        self.tradable_combobox.grid(row=5, column=1, sticky='ew', columnspan=2)
+        self.tradable_combobox.grid(row=6, column=1, sticky='ew', columnspan=2)
 
-        self.traded_label = tk.Label(self.item_options_frame, text='Traded: ')
-        self.traded_label.grid(row=6, column=0, sticky='w')
+        self.traded_label = tk.Label(self.single_item_options_frame, text='Traded: ')
+        self.traded_label.grid(row=7, column=0, sticky='w')
 
-        self.traded_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
+        self.traded_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
         self.traded_combobox.set(self.tab.process_manager.config[self.tab.name]['traded'])
-        self.traded_combobox.grid(row=6, column=1, sticky='ew', columnspan=2)
+        self.traded_combobox.grid(row=7, column=1, sticky='ew', columnspan=2)
 
-        self.slot_label = tk.Label(self.item_options_frame, text='Item Slot: ')
-        self.slot_label.grid(row=7, column=0, sticky='w')
+        self.slot_label = tk.Label(self.single_item_options_frame, text='Item Slot: ')
+        self.slot_label.grid(row=8, column=0, sticky='w')
 
-        self.slot_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=9, values=('Any', 'Primary', 'Secondary', 'Melee', 'Misc', 'PDA', 'PDA2', 'Action'))
+        self.slot_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=9, values=('Any', 'Primary', 'Secondary', 'Melee', 'Misc', 'PDA', 'PDA2', 'Action'))
         self.slot_combobox.set(self.tab.process_manager.config[self.tab.name]['slot'])
-        self.slot_combobox.grid(row=7, column=1, sticky='ew', columnspan=2)
+        self.slot_combobox.grid(row=8, column=1, sticky='ew', columnspan=2)
 
-        self.wear_label = tk.Label(self.item_options_frame, text='Wear: ')
-        self.wear_label.grid(row=8, column=0, sticky='w')
+        self.wear_label = tk.Label(self.single_item_options_frame, text='Wear: ')
+        self.wear_label.grid(row=9, column=0, sticky='w')
 
-        self.wear_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=14, values=('Any', *WEARS.values()))
+        self.wear_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=14, values=('Any', *WEARS.values()))
         self.wear_combobox.set(self.tab.process_manager.config[self.tab.name]['wear'])
-        self.wear_combobox.grid(row=8, column=1, sticky='ew', columnspan=2)
+        self.wear_combobox.grid(row=9, column=1, sticky='ew', columnspan=2)
 
-        self.australium_label = tk.Label(self.item_options_frame, text='Australium: ')
-        self.australium_label.grid(row=9, column=0, sticky='w')
+        self.australium_label = tk.Label(self.single_item_options_frame, text='Australium: ')
+        self.australium_label.grid(row=10, column=0, sticky='w')
 
-        self.australium_combobox = ttk.Combobox(self.item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
+        self.australium_combobox = ttk.Combobox(self.single_item_options_frame, state='readonly', width=5, values=('Both', 'True', 'False'))
         self.australium_combobox.set(self.tab.process_manager.config[self.tab.name]['australium'])
-        self.australium_combobox.grid(row=9, column=1, sticky='ew', columnspan=2)
+        self.australium_combobox.grid(row=10, column=1, sticky='ew', columnspan=2)
 
-        # Output Options
-        self.output_options_frame = tk.LabelFrame(self, text='Output')
+        # Items Options
+        self.items_options_frame = tk.LabelFrame(self, text='Items')
 
-        self.currency_label = tk.Label(self.output_options_frame, text='Currency: ')
+        self.currency_label = tk.Label(self.items_options_frame, text='Currency: ')
         self.currency_label.grid(row=0, column=0, sticky='w')
 
-        self.currency_combobox = ttk.Combobox(self.output_options_frame, state='readonly', width=7, values=('Default', 'Keys', 'Refined', 'USD'))
+        self.currency_combobox = ttk.Combobox(self.items_options_frame, state='readonly', width=7, values=('Default', 'Keys', 'Refined', 'USD'))
         self.currency_combobox.set(self.tab.process_manager.config[self.tab.name]['currency'])
         self.currency_combobox.grid(row=0, column=1, sticky='ew', columnspan=2)
 
-        self.minimum_displayed_item_value_label = tk.Label(self.output_options_frame, text='Min Displayed Item Value: ')
+        self.minimum_displayed_item_value_label = tk.Label(self.items_options_frame, text='Min Displayed Item Value: ')
         self.minimum_displayed_item_value_label.grid(row=1, column=0, sticky='w')
 
-        self.minimum_displayed_item_value_entry = ttk.Entry(self.output_options_frame, width=5)
+        self.minimum_displayed_item_value_entry = ttk.Entry(self.items_options_frame, width=5)
         self.minimum_displayed_item_value_entry.insert(0, self.tab.process_manager.config[self.tab.name]['minimum_displayed_item_value'])
         self.minimum_displayed_item_value_entry.grid(row=1, column=1, sticky='w')
 
-        self.minimum_displayed_item_value_currency_combobox = ttk.Combobox(self.output_options_frame, state='readonly', width=7, values=('Keys', 'Refined', 'USD'))
+        self.minimum_displayed_item_value_currency_combobox = ttk.Combobox(self.items_options_frame, state='readonly', width=7, values=('Keys', 'Refined', 'USD'))
         self.minimum_displayed_item_value_currency_combobox.set(self.tab.process_manager.config[self.tab.name]['minimum_displayed_item_value_currency'])
         self.minimum_displayed_item_value_currency_combobox.grid(row=1, column=2, sticky='ew')
 
-        self.displayed_items_label = tk.Label(self.output_options_frame, text='Displayed Items: ')
+        self.displayed_items_label = tk.Label(self.items_options_frame, text='Displayed Items: ')
         self.displayed_items_label.grid(row=2, column=0, sticky='w')
 
-        self.displayed_items_entry = ttk.Entry(self.output_options_frame, width=16)
+        self.displayed_items_entry = ttk.Entry(self.items_options_frame, width=16)
         self.displayed_items_entry.insert(0, self.tab.process_manager.config['output']['displayed_items'])
         self.displayed_items_entry.grid(row=2, column=1, sticky='w', columnspan=2)
 
-        self.items_per_line_label = tk.Label(self.output_options_frame, text='Items Per Line')
+        self.items_per_line_label = tk.Label(self.items_options_frame, text='Items Per Line')
         self.items_per_line_label.grid(row=3, column=0, sticky='w')
 
-        self.items_per_line_entry = ttk.Entry(self.output_options_frame, width=16)
+        self.items_per_line_entry = ttk.Entry(self.items_options_frame, width=16)
         self.items_per_line_entry.insert(0, self.tab.process_manager.config['output']['items_per_line'])
         self.items_per_line_entry.grid(row=3, column=1, columnspan=2)
 
-        self.image_size_label = tk.Label(self.output_options_frame, text='Image Size: ')
+        self.image_size_label = tk.Label(self.items_options_frame, text='Image Size: ')
         self.image_size_label.grid(row=4, column=0, sticky='w')
 
-        self.image_size_entry = ttk.Entry(self.output_options_frame, width=16)
+        self.image_size_entry = ttk.Entry(self.items_options_frame, width=16)
         self.image_size_entry.insert(0, self.tab.process_manager.config['output']['image_size'])
         self.image_size_entry.grid(row=4, column=1, sticky='w', columnspan=2)
 
-        self.font_size_label = tk.Label(self.output_options_frame, text='Font Size: ')
+        self.font_size_label = tk.Label(self.items_options_frame, text='Font Size: ')
         self.font_size_label.grid(row=5, column=0, sticky='w')
 
-        self.font_size_entry = ttk.Entry(self.output_options_frame, width=16)
+        self.font_size_entry = ttk.Entry(self.items_options_frame, width=16)
         self.font_size_entry.insert(0, self.tab.process_manager.config['output']['font_size'])
         self.font_size_entry.grid(row=5, column=1, sticky='w', columnspan=2)
 
@@ -445,24 +451,27 @@ class BaseOptions(tk.Toplevel):
         self.tab.process_manager.config.write(open('config.ini', 'w'))
 
     def display_category(self, event):
+        if not self.category_listbox.curselection():
+            return
+
         selection = self.category_listbox.get(int(self.category_listbox.curselection()[0]))
         if selection == 'Player':
             self.player_options_frame.grid(row=0, column=1, sticky='nsew')
-            self.item_options_frame.grid_remove()
-            self.output_options_frame.grid_remove()
+            self.single_item_options_frame.grid_remove()
+            self.items_options_frame.grid_remove()
             self.technical_options_frame.grid_remove()
-        if selection == 'Item':
+        if selection == 'Single Item':
             self.player_options_frame.grid_remove()
-            self.item_options_frame.grid(row=0, column=1, sticky='nsew')
-            self.output_options_frame.grid_remove()
+            self.single_item_options_frame.grid(row=0, column=1, sticky='nsew')
+            self.items_options_frame.grid_remove()
             self.technical_options_frame.grid_remove()
-        if selection == 'Output':
+        if selection == 'Items':
             self.player_options_frame.grid_remove()
-            self.item_options_frame.grid_remove()
-            self.output_options_frame.grid(row=0, column=1, sticky='nsew')
+            self.single_item_options_frame.grid_remove()
+            self.items_options_frame.grid(row=0, column=1, sticky='nsew')
             self.technical_options_frame.grid_remove()
         if selection == 'Technical':
             self.player_options_frame.grid_remove()
-            self.item_options_frame.grid_remove()
-            self.output_options_frame.grid_remove()
+            self.single_item_options_frame.grid_remove()
+            self.items_options_frame.grid_remove()
             self.technical_options_frame.grid(row=0, column=1, sticky='nsew')
