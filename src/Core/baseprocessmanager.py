@@ -88,7 +88,7 @@ class BaseProcessManager:
             # Check request status
             if response.status_code != 200:
                 self.show_error('There was an error updating the item schema.\n'
-                                'Your API key may be invalid.\n'
+                                'Your API key may be invalid. Double check your config file.\n'
                                 '\n'
                                 'Response:\n'
                                 '\n'
@@ -128,7 +128,7 @@ class BaseProcessManager:
         # Check request status
         if response.status_code != 200:
             self.show_error('There was an error updating the item schema.\n'
-                            'Your API key may be invalid.\n'
+                            'Your API key may be invalid. Double check your config file.\n'
                             '\n'
                             'Response:\n'
                             '\n'
