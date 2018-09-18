@@ -55,13 +55,19 @@ class BaseScan(threading.Thread):
 
     def get_player_summaries(self, players):
         steam_id64s = [player.id64 for player in players]
-        url = GET_SUMMARIES_URL.format(self.process_manager.config['api']['steam_api_key']) % steam_id64s
+        url = GET_SUMMARIES_URL.format(self.process_manager.config['api']['steam_api_key']) % str(steam_id64s).replace(' ', '')
         raw_summaries = self.process_manager.request_manager.make_api_request(url, mode='json', priority=False, tags=(self.scan_monitor,))
 
         if self.end_:
             return
 
-        summaries = {int(summary['steamid']): summary for summary in raw_summaries['response']['players']}
+        summaries = {}
+        for summary in raw_summaries['response']['players']:
+            if 'steamid' not in summary:
+                continue
+
+            summaries[int(summary['steamid'])] = summary
+
         for player in players:
             if player.id64 in summaries:
                 if summaries[player.id64]['communityvisibilitystate'] == 1:
