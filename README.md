@@ -6,8 +6,6 @@ Download the current distribution (1.2.9) from the releases tab above.
 
 Note: You have to provide your own steam and backpack.tf API keys (can be obtained at https://steamcommunity.com/dev and http://backpack.tf/developer). The guide (also in the releases tab) explains how to obtain the keys.
 
-Screenshots: http://imgur.com/a/torIx
-
 Guide: https://raw.githubusercontent.com/warmar/Scanner3/master/Guide.pdf
 
 Feel free to [add me](http://steamcommunity.com/id/warmar_) (suggestions should be submitted as github issues though)
