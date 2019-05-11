@@ -28,7 +28,7 @@ def report_launch():
     client_id = get_client_id()
     curr_time = round(time.time(), 2)
     try:
-        requests.get('https://scanner3.net/analytics?id=%s&launchTime=%s' % (client_id, curr_time))
+        requests.get('https://scanner3.net/analytics?id=%s&launchTime=%s' % (client_id, curr_time), timeout=5)
     except:
         pass
 
@@ -37,6 +37,6 @@ def report_close():
     client_id = get_client_id()
     curr_time = round(time.time(), 2)
     try:
-        requests.get('https://scanner3.net/analytics?id=%s&closeTime=%s' % (client_id, curr_time))
+        requests.get('https://scanner3.net/analytics?id=%s&closeTime=%s' % (client_id, curr_time), timeout=5)
     except:
         pass

@@ -44,7 +44,7 @@ class GUIProcessManager(baseprocessmanager.BaseProcessManager):
         self.gui.splash.set_status('Checking For Updates...')
 
         try:
-            raw_response = requests.get('https://scanner3.net/version.json').json()
+            raw_response = requests.get('https://scanner3.net/version.json', timeout=5).json()
         except (ValueError, ConnectionError, RequestException):
             self.show_error('There was an error checking for updates.')
             return
