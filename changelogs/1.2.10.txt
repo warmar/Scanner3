@@ -1,0 +1,1 @@
+- Scanner3 will no longer fail to launch if it cannot check for updates.
