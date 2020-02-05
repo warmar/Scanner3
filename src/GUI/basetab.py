@@ -124,8 +124,10 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
 
         # Player Name
         player_name = player.name.encode('ascii', 'ignore').decode()
-        if player.last_online is not None:
-            player_name += ' (%s)' % time.ctime(player.last_online)
+        if player.last_online in (None, 0):
+            player_name += ' (Last Online Unknown)'
+        else:
+            player_name += ' (Last Online %s)' % time.ctime(player.last_online)
         player_name += ' Keys: %s, Refined: %s' % (player.get_number_keys(), player.get_number_refined())
         self.output_canvas.create_text(
             0,

@@ -72,12 +72,16 @@ class BaseScan(threading.Thread):
             if player.id64 in summaries:
                 if summaries[player.id64]['communityvisibilitystate'] == 1:
                     continue
-                if 'lastlogoff' not in summaries[player.id64]:
-                    continue
+                if 'lastlogoff' in summaries[player.id64]:
+                    player.last_online = summaries[player.id64]['lastlogoff']
+                else:
+                    player.last_online = 0
                 player.name = summaries[player.id64]['personaname']
                 player.avatar = summaries[player.id64]['avatarmedium']
                 player.status = summaries[player.id64]['personastate'] if 'gameid' not in summaries[player.id64] else -1
-                player.last_online = summaries[player.id64]['lastlogoff']
+
+            else:
+                print("Missing summary for %s" % player.id64)
 
     def scan(self):
         summary_thread = None
@@ -122,8 +126,10 @@ class BaseScan(threading.Thread):
                 self.done += 1
                 self.update_progress()
                 if not player.check(self.scan_monitor.f2p, self.scan_monitor.marked, self.scan_monitor.status, self.scan_monitor.max_hours, self.scan_monitor.max_refined):
+                    print("Player %s failed check" % player.id64)
                     continue
                 if not player.check_items(self.scan_monitor.item_requirements):
+                    print("Player %s failed item check" % player.id64)
                     continue
                 self.scan_monitor.report_finished_player(player)
 
@@ -172,14 +178,17 @@ class BaseScan(threading.Thread):
                     for player in pending[:]:
                         pending.remove(player)
                         if player.status == -2:
+                            print("Player %s had status -2, aborting" % player.id64)
                             self.done += 1
                             self.update_progress()
                             continue
                         if not player.check_status(self.scan_monitor.status):
+                            print("Player %s failed status check, aborting" % player.id64)
                             self.done += 1
                             self.update_progress()
                             continue
                         if not player.check_last_online(self.scan_monitor.raw_minimum_last_online):
+                            print("Player %s failed last online check, aborting" % player.id64)
                             self.done += 1
                             self.update_progress()
                             continue
