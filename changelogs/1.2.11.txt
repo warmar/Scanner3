@@ -1,0 +1,1 @@
+- Fixed a bug where players would be skipped if their last online time was not returned by the API.
