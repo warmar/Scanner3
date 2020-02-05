@@ -79,7 +79,6 @@ class BaseScan(threading.Thread):
                 player.name = summaries[player.id64]['personaname']
                 player.avatar = summaries[player.id64]['avatarmedium']
                 player.status = summaries[player.id64]['personastate'] if 'gameid' not in summaries[player.id64] else -1
-
             else:
                 print("Missing summary for %s" % player.id64)
 
