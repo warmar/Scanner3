@@ -176,14 +176,6 @@ class GUI(tk.Tk):
         festive_skin_item_names = os.listdir('Resources/Items/Festive Skins')
         particle_file_names = os.listdir('Resources/Particle Effects')
 
-        total = len(regular_item_names)
-        total += len(australium_item_names)
-        total += len(paint_item_names)
-        total += len(skin_item_names)
-        total += len(festive_skin_item_names)
-        total += len(particle_file_names)
-        done = 0
-
         q = queue.Queue()
 
         def update_image(file_name, directory):
@@ -191,7 +183,11 @@ class GUI(tk.Tk):
             img.load()
             q.put((file_name.replace('.png', ''), img))
 
+        total = 0
+
         def add_thread(file_name, directory):
+            nonlocal total
+            total += 1
             threading.Thread(target=lambda: update_image(file_name, directory)).start()
 
         # Start thread to load each image
@@ -209,13 +205,12 @@ class GUI(tk.Tk):
             add_thread(file_name, 'Resources/Particle Effects/')
 
         # Receive images from threads
-        for _ in range(total):
+        for done in range(total):
             # Save Image
             name, image = q.get()
             self.images[name] = ImageTk.PhotoImage(image)
 
             # Update Progress
-            done += 1
             if self.splash is not None:
                 self.splash.set_status('Loading Images %s%%' % (int(done / total * 100)))
 
