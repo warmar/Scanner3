@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import io
+import sys
 import threading
 import time
 import tkinter as tk
@@ -76,12 +77,37 @@ class BaseTab(tk.Frame, scanmonitor.ScanMonitor):
         self.output_button.grid(row=0, column=2, rowspan=7, sticky='ns')
 
         self.output_canvas = tk.Canvas(self, scrollregion=(0, 0, 0, 0), relief='ridge', bg='#999999', bd=2, highlightthickness=0)
-        self.output_canvas.bind('<MouseWheel>', lambda event: self.output_canvas.yview_scroll(int(-event.delta / 120), 'units'))
-        self.output_canvas.bind('<Button-2>', lambda event: self.clear_output())
+        if sys.platform == "win32":
+            self.output_canvas.bind('<MouseWheel>', self.on_mouse_wheel)
+        else:
+            self.output_canvas.bind('<Button-4>', self.on_scroll_up)
+            self.output_canvas.bind('<Button-5>', self.on_scroll_down)
+        self.output_canvas.bind('<Button-2>', self.on_middle_click)
         self.output_scrollbar = ttk.Scrollbar(self, command=self.output_canvas.yview)
         self.output_canvas.config(yscrollcommand=self.output_scrollbar.set)
         self.output_canvas.grid(row=0, column=3, rowspan=7, sticky='nsew')
         self.output_scrollbar.grid(row=0, column=4, rowspan=7, sticky='ns')
+
+    def on_middle_click(self, event):
+        self.clear_output()
+
+    def on_scroll_up(self, event):
+        self.scroll_up()
+
+    def on_scroll_down(self, event):
+        self.scroll_down()
+
+    def on_mouse_wheel(self, event):
+        if event.delta > 0:
+            self.scroll_up()
+        else:
+            self.scroll_down()
+
+    def scroll_up(self):
+        self.output_canvas.yview_scroll(-1, "units")
+
+    def scroll_down(self):
+        self.output_canvas.yview_scroll(1, "units")
 
     def create_options(self):
         self.options = None
