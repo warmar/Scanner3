@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+import queue
 import sys
+import threading
 import tkinter as tk
 import tkinter.ttk as ttk
 import webbrowser
@@ -182,35 +184,39 @@ class GUI(tk.Tk):
         total += len(particle_file_names)
         done = 0
 
-        def update_progress():
-            nonlocal done
+        q = queue.Queue()
+
+        def update_image(file_name, directory):
+            img = Image.open(os.path.join(directory, file_name)).resize((image_size, image_size), Image.ANTIALIAS)
+            img.load()
+            q.put((file_name.replace('.png', ''), img))
+
+        def add_thread(file_name, directory):
+            threading.Thread(target=lambda: update_image(file_name, directory)).start()
+
+        # Start thread to load each image
+        for file_name in regular_item_names:
+            add_thread(file_name, 'Resources/Items/Regular/')
+        for file_name in australium_item_names:
+            add_thread(file_name, 'Resources/Items/Australium/')
+        for file_name in paint_item_names:
+            add_thread(file_name, 'Resources/Items/Paint/')
+        for file_name in skin_item_names:
+            add_thread(file_name, 'Resources/Items/Skins/')
+        for file_name in festive_skin_item_names:
+            add_thread(file_name, 'Resources/Items/Festive Skins/')
+        for file_name in particle_file_names:
+            add_thread(file_name, 'Resources/Particle Effects/')
+
+        # Receive images from threads
+        for _ in range(total):
+            # Save Image
+            name, image = q.get()
+            self.images[name] = ImageTk.PhotoImage(image)
+
+            # Update Progress
             done += 1
             if self.splash is not None:
                 self.splash.set_status('Loading Images %s%%' % (int(done / total * 100)))
-
-        for file_name in regular_item_names:
-            file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Regular/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
-        for file_name in australium_item_names:
-            file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Australium/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
-        for file_name in paint_item_names:
-            file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Paint/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
-        for file_name in skin_item_names:
-            file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Skins/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
-        for file_name in festive_skin_item_names:
-            file_name = file_name.replace('.png', '')
-            self.images[file_name] = ImageTk.PhotoImage(Image.open('Resources/Items/Festive Skins/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
-        for file_name in particle_file_names:
-            file_name = file_name.replace('.png', '')
-            self.particle_effects[file_name] = ImageTk.PhotoImage(Image.open('Resources/Particle Effects/%s.png' % file_name).resize((image_size, image_size), Image.ANTIALIAS))
-            update_progress()
 
         self.default_avatar = ImageTk.PhotoImage(Image.open('Resources/TF2 Logo.png').resize((image_size, image_size), Image.ANTIALIAS))
