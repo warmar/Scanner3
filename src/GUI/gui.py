@@ -81,7 +81,7 @@ class GUI(tk.Tk):
 
             copyright_frame = tk.Frame(about_window)
             copyright_frame.grid(row=0, column=0, sticky='ew')
-            about_label = tk.Label(copyright_frame, text='Copyright © 2016-2018 Warwick Marangos ')
+            about_label = tk.Label(copyright_frame, text='Copyright © 2016-2020 Warwick Marangos ')
             about_label.grid(row=0, column=0)
             github_link_label = tk.Label(copyright_frame, text='www.github.com/warmar', fg='blue', cursor='hand2')
             github_link_label.bind('<Button-1>', lambda event: webbrowser.open('https://www.github.com/warmar'))
