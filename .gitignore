@@ -1,6 +1,7 @@
 venv/*
 .idea/
 distwin/
+distlinux/
 *.pyc
 src/Resources/ItemSchema.txt
 src/Resources/ParticleEffectSchema.txt
