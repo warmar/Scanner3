@@ -1,1 +1,3 @@
 - Load images in parallel
+- Fix output scrolling in linux
+- Add linux distribution
